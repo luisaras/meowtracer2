@@ -1,15 +1,14 @@
 #include "SpotLight.h"
 #include <iostream>
 
-Vec3 SpotLight::getDirection(LightHit &lh) {
-  return origin - lh.rayHit.point;
-}
-
-float SpotLight::getIntensity(LightHit& lh) {
-  float cos = Vec3::Dot(lh.lightDir, direction) / lh.lightDir.Length();
-  if (cos < angle) {
-    return 0;
-  } else {
-    return (cos - angle) / (1 - angle);
-  }
+LightHit SpotLight::hit(Vec3& rd, RayHit& rh) {
+	LightHit lh(rd, rh);
+	lh.lightDir = origin - lh.rayHit.point;
+	float cos = Vec3::Dot(lh.lightDir, direction) / lh.lightDir.Length();
+	if (cos < angle) {
+		lh.color = Color(0, 0, 0);
+	} else {
+		lh.color = (cos - angle) / (1 - angle) * color;
+	}
+	return lh;
 }

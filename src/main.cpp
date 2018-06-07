@@ -29,25 +29,19 @@ Po (o) = Pm (M) / 4 | o * hr |
 
 */
 
-void testImage() {
-	string in = "in.png";
-	string out = "out.png";
-	Image img(in);
-	img.save(out);
-}
-
 void printScene(string &fileName) {
 	string inputFile = "meow/" + fileName + ".meow";
 	string outputFile = "png/" + fileName + ".png";
 	Parser parser;
 	if (parser.load(inputFile)) {
 		time_t before = time(NULL);
-		//Color* colors = data.renderer->render(data.scene, data.colCount, data.rowCount);
+		Color* colors = parser.renderer->render(parser.colCount, parser.rowCount);
 		time_t after = time(NULL);
 		double seconds = difftime(after, before);
 		cout << "Rendering done in " << seconds << " seconds." << endl; 
-		//Image img(data.colCount, data.rowCount, colors);
-		//img.save(outputFile);
+		Image img(parser.colCount, parser.rowCount, colors);
+		img.save(outputFile);
+		delete [] colors;
 	}
 }
 
@@ -55,8 +49,7 @@ int main(int argc, char* argv[]) {
 	srand (time(NULL));
 	if (argc > 1) {
 		string fileName = argv[1];
-		//printScene(fileName);
-		testImage();
+		printScene(fileName);
 	} else {
 		cout << "File name must be specified." << endl;
 	}

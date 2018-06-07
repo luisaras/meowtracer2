@@ -6,10 +6,12 @@
 
 class PointLight : public Light {
 private:
-  Point3 origin;
+	Point3 origin;
+	float length;
 public:
-  PointLight(Matrix4 &xform, Color &c, Point3 &o) : Light(c), origin(xform.TransformPoint(o)) {}
-  Vec3 getDirection(LightHit &lh);
+	PointLight(Matrix4 &xform, Color &c, Point3 &o, float l) : 
+  		Light(c), origin(xform.TransformPoint(o)), length(l) {}
+	LightHit hit(Vec3& rd, RayHit& rh);
 };
 
 #endif

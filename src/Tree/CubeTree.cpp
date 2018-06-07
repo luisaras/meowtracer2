@@ -17,12 +17,15 @@ CubeTree::CubeTree(CubeTree* l, CubeTree* r) {
 }
 
 CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxLeaves) {
+	if (hitables.size() == 0)
+		return;
 	if (hitables.size() == 1) {
 		hitable = hitables[0];
 		bounds = hitable->hitBox();
 		return;
 	}
 	children = vector<CubeTree*>(hitables.size());
+	std::cout << children.size() <<std::endl;
 	for (uint i = 0; i < hitables.size(); i++) {
 		children[i] = new CubeTree(hitables[i]);
 	}
@@ -67,7 +70,7 @@ RayHit CubeTree::hit(Ray& ray) {
 		if (tree->bounds.hit(ray)) {
 			if (tree->hitable) {
 				RayHit rh = tree->hitable->hit(ray);
-				if (!std::isnan(rh.t) && rh.t < minrh.t && rh.t > 0) {
+				if (!isnan(rh.t) && rh.t > 0 && (rh.t < minrh.t || isnan(minrh.t))) {
 					minrh = rh;
 				}
 			} else {
@@ -76,7 +79,7 @@ RayHit CubeTree::hit(Ray& ray) {
 			}
 		}
 	}
-	return minrh;
+ 	return minrh;
 }
 
 bool CubeTree::hitsLight(Light* light, LightHit& lh) {

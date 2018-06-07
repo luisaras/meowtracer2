@@ -8,9 +8,10 @@
 
 struct LightHit {
   RayHit& rayHit;
-  Vec3& rayDir;
+  Vec3 rayDir;
   Vec3 lightDir;
-  LightHit(Vec3 &rd, RayHit &rh) : rayDir(rd), rayHit(rh) {}
+  Color color;
+  LightHit(Vec3 &rd, RayHit &rh) : rayDir(-rd), rayHit(rh) {}
 };
 
 class Light {
@@ -18,8 +19,7 @@ public:
 	Color color;
 	Light(Color &c) : color(c) {}
 
-	virtual Vec3 getDirection(LightHit& lh) = 0;
-	virtual float getIntensity(LightHit& lh) { return 1; }
+	virtual LightHit hit(Vec3& rd, RayHit& rh) = 0;
 
 };
 

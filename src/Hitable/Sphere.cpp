@@ -38,7 +38,7 @@ Color Sphere::getTexture(Vec2& uv) {
 }
 
 RayHit Sphere::hit(Ray &ray) {
-	RayHit hr;
+	RayHit rh;
 
 	Point3 o = invt.TransformPoint(ray.origin);
 	Vec3 d = invt.TransformVector(ray.direction);
@@ -53,32 +53,33 @@ RayHit Sphere::hit(Ray &ray) {
 		float sqrtdelta = std::sqrt(delta);
 		float t1 = (-b - sqrtdelta) / (2 * a);
 		float t2 = (-b + sqrtdelta) / (2 * a);
-		hr.t = std::min(t1, t2);
-		if (hr.t >= 0) {
-			hr.point = ray.at(hr.t);
-			hr.normal = tRay.at(hr.t);
+		rh.t = std::min(t1, t2);
+		if (rh.t >= 0) {
+			rh.point = ray.at(rh.t);
+			rh.normal = tRay.at(rh.t);
 
-			float x = hr.normal.x, y = hr.normal.y, z = hr.normal.z;
+			float x = rh.normal.x, y = rh.normal.y, z = rh.normal.z;
 			//float tetha = acos(z);
 			//float phi = atan(y / x);
-			//hr.texture = material->texture(tetha / (2 * PI), phi / (2 * PI), hr.normal);
+			//rh.texture = material->texture(tetha / (2 * PI), phi / (2 * PI), rh.normal);
 			//std::cout << x << " " << y << " " << z << " " << tetha / PI * 180 << " " << phi / PI * 180 << std::endl;
 
 			float phi = atan2(z, x);
 	    	float theta = asin(y);
 		    float u = 1-(phi + PI) / (2*PI);
 		    float v = (theta + PI/2) / PI;
-		    hr.uv = Vec2(u, v);
+		    rh.uv = Vec2(u, v);
 
 			//float u = x / 2 + 0.5;
 			//float v = y / 2 + 0.5;
-			//hr.texture = material->texture(u, v, hr.normal);
+			//rh.texture = material->texture(u, v, rh.normal);
 
-			hr.normal = transform.TransformVector(hr.normal);
-			hr.normal = Vec3::Normalize(hr.normal);
+			rh.normal = transform.TransformVector(rh.normal);
+			rh.normal = Vec3::Normalize(rh.normal);
+			rh.hitable = this;
 		}
 	} else {
-		hr.t = NAN;
+		rh.t = NAN;
 	}
-	return hr;
+	return rh;
 }

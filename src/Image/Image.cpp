@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cmath>
+#include <iostream>
 #include <algorithm>
 
 using std::min;
@@ -37,8 +38,10 @@ float toFloat(int a) {
 
 Image::Image(int w, int h, Color* colors) {
 	width = w; height = h;
+  row_pointers = new png_bytep[h];
   for(int y = 0; y < height; y++) {
-    png_bytep row = row_pointers[y];
+    png_bytep row = new png_byte[w * 4];
+    row_pointers[y] = row;
     for(int x = 0; x < width; x++) {
       Color& color = colors[x + y * width];
       row[x * 4] = toByte(color.x);

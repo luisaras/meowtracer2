@@ -12,7 +12,7 @@ private:
 public:
   SphereLight(Matrix4 &xform, Color &c, Point3 &o, Vec3 d, float a, float s) : 
     Light(c), origin(xform.TransformPoint(o)), direction(-xform.TransformVector(d)), angle(a), size(s) {}
-  Vec3 getDirection(LightHit &lh);
+  LightHit hit(Vec3& rd, RayHit& rh);
 };
 
 #endif

@@ -34,14 +34,17 @@ $(foreach i,$(MESH),$(eval $(call recipe,$(i),Mesh/)))
 PARSER = Parser
 $(foreach i,$(PARSER),$(eval $(call recipe,$(i),Parser/)))
 
-RENDS = Renderer RayTracer BlinnPhong
+REF = BlinnPhong
+$(foreach i,$(REF),$(eval $(call recipe,$(i),Reflection/)))
+
+RENDS = Renderer RayTracer
 $(foreach i,$(RENDS),$(eval $(call recipe,$(i),Renderer/)))
 
 TREE = Box CubeTree
 $(foreach i,$(TREE),$(eval $(call recipe,$(i),Tree/)))
 
-FOLDERS = Camera Image Hitable Light Material Math Mesh Parser Renderer Tree
-SRC = $(CAMS) $(HIT) $(IMG) $(LIGHTS) $(MAT) $(MATH) $(MESH) $(PARSER) $(RENDS) $(TREE)
+FOLDERS = Camera Image Hitable Light Material Math Mesh Parser Reflection Renderer Tree
+SRC = $(CAMS) $(HIT) $(IMG) $(LIGHTS) $(MAT) $(MATH) $(MESH) $(PARSER) $(REF) $(RENDS) $(TREE)
 
 RECIPES = bin/main.o $(foreach i, $(SRC), bin/$(i).o)
 

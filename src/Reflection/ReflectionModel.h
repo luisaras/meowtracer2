@@ -3,7 +3,7 @@
 
 #include "../Hitable/Hitable.h"
 #include "../Tree/CubeTree.h"
-#include "Scene.h"
+#include "../Renderer/Scene.h"
 
 class ReflectionModel {
 public:
