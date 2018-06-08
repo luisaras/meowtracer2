@@ -6,6 +6,8 @@
 #include "../Light/PointLight.h"
 
 bool Parser::load(string& file) {
+	colCount = rowCount = 200;
+
 	Matrix4 xform = Matrix4::Identity();
 
 	// Camera
@@ -31,10 +33,18 @@ bool Parser::load(string& file) {
 		rayTracer->scene.materials.push_back(mat);
 	}
 
-	// Sphere
+	// Sphere 1
 	{
 		Point3 center(0.5, 0.5, -2);
-		Sphere* sphere = new Sphere(xform, center, 1);
+		Sphere* sphere = new Sphere(xform, center, 0.5);
+		sphere->material = rayTracer->scene.materials[0];
+		rayTracer->scene.hitables.push_back(sphere);
+	}
+
+	// Sphere 2
+	{
+		Point3 center(0.25, 1.25, -2);
+		Sphere* sphere = new Sphere(xform, center, 0.25);
 		sphere->material = rayTracer->scene.materials[0];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
@@ -42,7 +52,7 @@ bool Parser::load(string& file) {
 	//Light
 	{
 		Color color(1, 1, 1);
-		Point3 origin(0.5, 1.5, -1);
+		Point3 origin(0.5, 2, -2);
 		PointLight* light = new PointLight(xform, color, origin, 1);
 		rayTracer->scene.lights.push_back(light);
 	}

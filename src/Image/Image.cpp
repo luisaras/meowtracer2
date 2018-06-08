@@ -118,8 +118,6 @@ bool Image::load(string& file) {
 }
 
 bool Image::save(string& file) {
-  int y;
-
   FILE *fp = fopen(file.c_str(), "wb");
   if(!fp) return false;
 

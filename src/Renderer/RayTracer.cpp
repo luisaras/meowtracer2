@@ -6,7 +6,6 @@ void RayTracer::preprocess() {
 }
 
 Color RayTracer::getColor(Ray &initRay, float x, float y) {
-	int depth = 0;
 	Ray ray = initRay;
 	Color color(1, 1, 1);
 	RayHit rh = tree->hit(ray);

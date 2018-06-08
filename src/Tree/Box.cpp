@@ -3,7 +3,7 @@
 Box Box::cluster(Box& other) {
   Vec3 min = Vec3::Minimize(bounds[0], other.bounds[0]);
   Vec3 max = Vec3::Maximize(bounds[1], other.bounds[1]);
-  return Box(max, min);
+  return Box(min, max);
 }
 
 float Box::volume() {

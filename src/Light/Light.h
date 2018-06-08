@@ -20,6 +20,7 @@ public:
 	Light(Color &c) : color(c) {}
 
 	virtual LightHit hit(Vec3& rd, RayHit& rh) = 0;
+	virtual ~Light() {}
 
 };
 

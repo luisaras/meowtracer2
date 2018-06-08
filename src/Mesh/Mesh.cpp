@@ -68,7 +68,7 @@ void Mesh::transform(Matrix4& xform) {
 
 void Mesh::getTriangles(vector<Triangle>& v, Material* mat) {
 	Material* meshMat = mat == 0 ? material : mat;
-	for(int i = 0; i < vertices.size(); i += 3) {
+	for(uint i = 0; i < vertices.size(); i += 3) {
 		Vec3 v1 = getCoord(i);
 		Vec3 v2 = getCoord(i+1);
 		Vec3 v3 = getCoord(i+2);
@@ -141,7 +141,7 @@ string Mesh::loadFace(vector<string> &words) {
 						vertices.push_back(tvert[j]);
 				}
 				if (tvert.size() == 4) {
-					int temp;
+					int temp = 0;
 					for (uint j = 0; j < tvert.size(); j++) {
 						if (tvert[j].coord != curr.coord
 								&& tvert[j].coord != prev.coord

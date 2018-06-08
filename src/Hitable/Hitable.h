@@ -16,6 +16,7 @@ public:
 	virtual RayHit hit(Ray& ray) = 0;
 	virtual Box hitBox() = 0;
 	virtual Color getTexture(Vec2& uv) = 0;
+	virtual ~Hitable() {}
 };
 
 struct RayHit {

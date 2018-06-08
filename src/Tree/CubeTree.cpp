@@ -16,7 +16,7 @@ CubeTree::CubeTree(CubeTree* l, CubeTree* r) {
 	depth = (l->depth > r->depth ? l->depth : r->depth) + 1;
 }
 
-CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxLeaves) {
+CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 	if (hitables.size() == 0)
 		return;
 	if (hitables.size() == 1) {
@@ -30,28 +30,36 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxLeaves) {
 		children[i] = new CubeTree(hitables[i]);
 	}
 	int depth = 0;
-	for (int size = children.size(); depth < maxDepth && size < maxLeaves; size++) {
-		if (children.size() == 1)
+	for (int size = children.size(); size < maxNodes; size++) {
+		if (children.size() == 1) {
+			hitable = children[0]->hitable;
+			bounds = children[0]->bounds;
+			children = children[0]->children;
 			break;
+		}
 		int mini = 1, minj = 0;
 		float minvol = INF;
+		Box minbox;
 		for (uint i = 0; i < children.size(); i++) {
 			for (uint j = 0; j < i; j++) {
-				float vol = children[i]->bounds.cluster(children[j]->bounds).volume();
+				Box box = children[i]->bounds.cluster(children[j]->bounds);
+				float vol = box.volume();
 				if (vol < minvol) {
 					minvol = vol;
 					mini = i;
 					minj = j;
+					minbox = box;
 				}
 			}
 		}
 		CubeTree* parent = new CubeTree(children[mini], children[minj]);
+		parent->bounds = minbox;
 		if (mini < minj) {
-			children.erase(children.begin() + mini);
 			children.erase(children.begin() + minj);
+			children.erase(children.begin() + mini);
 		} else {
-			children.erase(children.begin() + minj);
 			children.erase(children.begin() + mini);
+			children.erase(children.begin() + minj);
 		}
 		children.push_back(parent);
 		if (parent->depth > depth)

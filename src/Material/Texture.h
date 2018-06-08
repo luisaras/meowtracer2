@@ -10,6 +10,7 @@ class Texture {
 public:
 	Texture() {}
   virtual Color getColor(float u, float v, Point3 &p) { return Color(1, 1, 1); }
+  virtual ~Texture() {}
 };
 
 class CheckersTexture : public Texture {

@@ -1,17 +1,52 @@
 #include "Renderer.h"
 #include <iostream>
+#include <cmath>
+
+#define NTHREAD 1
 
 using std::cout;
 using std::endl;
 using std::flush;
+using std::min;
+
+void Renderer::updateProgress() {
+	mutex.lock();
+	int newProgress = ceil(++progress * 100 / totalProgress);
+	if (newProgress != progressi) {
+		progressi = newProgress;
+		cout << "\rProgress: " << progressi << '%' << flush; 
+	}
+	mutex.unlock();
+}
 
 Color* Renderer::render(int width, int height) {
 	Color* colors = new Color[width * height];
-	float progress = 0;
-	int totalProgress = width * height;
-	int progressi = 0;
+	progress = progressi = 0;
+	totalProgress = width * height;
+
+	if (NTHREAD == 1) {
+		renderLines(colors, width, height, 0, height);
+	} else {
+		thread threads[NTHREAD];
+		int lineCount = ceil(height / NTHREAD);
+		int y1 = 0, y2 = lineCount;
+		for (int i = 0; i < NTHREAD; i++) {
+			threads[i] = thread(&Renderer::renderLines, this, colors, width, height, y1, y2);
+			y1 = y2;
+			y2 = min(y1 + lineCount, height);
+		}
+		for (int i = 0; i < NTHREAD; i++) {
+			threads[i].join();
+		}
+	}
+
+	cout << endl;
+	return colors;
+}
+
+void Renderer::renderLines(Color* colors, int width, int height, int y1, int y2) {
 	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
+		for (int j = y1; j < y2; j++) {
 			Color c(0, 0, 0);
 			if (sampleCount > 1) 
 				for(int s = 0; s < sampleCount; s++) {
@@ -32,20 +67,14 @@ Color* Renderer::render(int width, int height) {
 				ray.normalize();
 				c += getColor(ray, x, y) / sampleCount;
 			}
-			int newProgress = int(++progress * 100 / totalProgress);
-			if (newProgress != progressi) {
-				progressi = newProgress;
-				cout << "\rProgress: " << progressi << '%' << flush; 
-			}
+			updateProgress();
 			colors[j * width + i] = c;
 		}
 	}
-	cout << endl;
-	return colors;
 }
 
 Color Renderer::backgroundColor(float tCol, float tRow)  {
 	Color top = Vec3::Lerp(tl, tr, tCol);
 	Color bottom = Vec3::Lerp(bl, br, tCol);
-	return Vec3::Lerp(top, bottom, tRow);
+	return Vec3::Lerp(bottom, top, tRow);
 }

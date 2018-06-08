@@ -72,7 +72,6 @@ RayHit Triangle::hit(Ray &ray) {
 }
 
 bool Triangle::isInside(Vec3& point) {
-  // Starting vars
   Vec3 w = point - origin;
   Vec3 n = calculateNormal();
   Vec3 e1w = Vec3::Cross(e1, w);
@@ -81,8 +80,6 @@ bool Triangle::isInside(Vec3& point) {
   float y = Vec3::Dot(e1w, n) / nn;
   float b = Vec3::Dot(e2w, n) / nn;
   float a = 1 - y - b;
-  // Projected point
-  Vec3 p = (a * origin) + (b * (origin + e1)) + (y * (origin + e2));
   return a >= 0 && a <= 1 && b >= 0 && b <= 1 && y >= 0 && y <= 1;
 }
 

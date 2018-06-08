@@ -1,6 +1,8 @@
 all: main
 
-CPP_FLAGS= -g -std=c++11 -O3
+CPP_FLAGS = -g -std=c++11 -O3 -Wall -Wno-reorder
+
+CPP_LIBS = -ljson_spirit -lpng -pthread
 
 define recipe
 bin/$(1).o: src/$(2)$(1).cpp src/$(2)$(1).h
@@ -49,7 +51,7 @@ SRC = $(CAMS) $(HIT) $(IMG) $(LIGHTS) $(MAT) $(MATH) $(MESH) $(PARSER) $(REF) $(
 RECIPES = bin/main.o $(foreach i, $(SRC), bin/$(i).o)
 
 main: $(RECIPES)
-	g++ -o main $(RECIPES) -ljson_spirit -lpng
+	g++ -o main $(RECIPES) $(CPP_LIBS)
 	rm -f src/*h.gch
 	$(foreach i,$(FOLDERS), rm -f src/$(i)/*.h.gch)
 
