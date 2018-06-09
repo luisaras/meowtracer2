@@ -1,10 +1,10 @@
 #include "PointLight.h"
 
-LightHit PointLight::hit(Vec3& rd, RayHit& rh) {
-	LightHit lh(rd, rh);
-	Vec3 dir = origin - lh.rayHit.point;
+LightHit PointLight::hit(Ray& ray, RayHit& rh) {
+	LightHit lh(ray, rh);
+	Vec3 dir = origin - rh.point;
 	float distance = dir.Length();
-	lh.lightDir = Vec3::Normalize(dir);
+	lh.direction = Vec3::Normalize(dir);
 	lh.color = color * length / (distance * distance);
 	return lh;
 }

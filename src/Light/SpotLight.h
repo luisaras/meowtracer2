@@ -14,7 +14,7 @@ public:
     Light(c), origin(xform.TransformPoint(o)), direction(-xform.TransformVector(d)), angle(a) {
       direction = Vec3::Normalize(direction);
     }
-    LightHit hit(Vec3& rd, RayHit& rh);
+    LightHit hit(Ray& ray, RayHit& rh);
 
 };
 

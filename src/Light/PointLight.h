@@ -11,7 +11,7 @@ private:
 public:
 	PointLight(Matrix4 &xform, Color &c, Point3 &o, float l) : 
   		Light(c), origin(xform.TransformPoint(o)), length(l) {}
-	LightHit hit(Vec3& rd, RayHit& rh);
+	LightHit hit(Ray& ray, RayHit& rh);
 };
 
 #endif

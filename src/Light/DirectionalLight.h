@@ -11,7 +11,7 @@ public:
     Light(c), direction(-xform.TransformVector(dir)) {
     	direction = Vec3::Normalize(direction);
     }
-	LightHit hit(Vec3& rd, RayHit& rh);
+	LightHit hit(Ray& ray, RayHit& rh);
 };
 
 #endif

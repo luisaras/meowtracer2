@@ -1,11 +1,11 @@
 #include "SphereLight.h"
 #include "../Math/Util.h"
 
-LightHit SphereLight::hit(Vec3& rd, RayHit& rh) {
-	LightHit lh(rd, rh);
-	Vec3 v = origin - lh.rayHit.point;
-	lh.lightDir = v + randomUnitVec3(size);
-	lh.lightDir = Vec3::Normalize(lh.lightDir);
+LightHit SphereLight::hit(Ray& ray, RayHit& rh) {
+	LightHit lh(ray, rh);
+	Vec3 v = origin - rh.point;
+	lh.direction = v + randomUnitVec3(size);
+	lh.direction = Vec3::Normalize(lh.direction);
 	lh.color = color;
 	return lh;
 }

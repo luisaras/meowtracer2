@@ -36,7 +36,7 @@ $(foreach i,$(MESH),$(eval $(call recipe,$(i),Mesh/)))
 PARSER = Parser
 $(foreach i,$(PARSER),$(eval $(call recipe,$(i),Parser/)))
 
-REF = BlinnPhong
+REF = BlinnPhong CookTorrance
 $(foreach i,$(REF),$(eval $(call recipe,$(i),Reflection/)))
 
 RENDS = Renderer RayTracer

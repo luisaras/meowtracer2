@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include "../Renderer/RayTracer.h"
 #include "../Reflection/BlinnPhong.h"
+#include "../Reflection/CookTorrance.h"
 #include "../Camera/PerspectiveCamera.h"
 #include "../Hitable/Sphere.h"
 #include "../Light/PointLight.h"
@@ -35,12 +36,15 @@ bool Parser::load(string& file) {
 	{
 		Material* mat = new Material();
 		mat->kd = Color(1, 0, 1);
+		mat->ks = Color(1, 0.8, 0.8) * 0.8;
+		mat->roughness = 0.5;
+		mat->shininess = 8;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Sphere 1
 	{
-		Point3 center(0.5, 0.5, -2);
+		Point3 center(0.5, 0.25, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.5);
 		sphere->material = rayTracer->scene.materials[0];
 		rayTracer->scene.hitables.push_back(sphere);
@@ -48,14 +52,14 @@ bool Parser::load(string& file) {
 
 	// Sphere 2
 	{
-		Point3 center(0.25, 1.25, -2);
-		Sphere* sphere = new Sphere(xform, center, 0.25);
+		Point3 center(0.5, 1.25, -3);
+		Sphere* sphere = new Sphere(xform, center, 0.5);
 		sphere->material = rayTracer->scene.materials[0];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
 	std::default_random_engine generator (0);
-	for (int i = 0; i < 300; i++) {
+	for (int i = 0; i < 0; i++) {
 		Point3 center(1.5 * generator() / generator.max() - 0.25, 
 			1.5 * generator() / generator.max() - 0.25,
 			1.5 * generator() / generator.max() - 2.25);
@@ -67,7 +71,7 @@ bool Parser::load(string& file) {
 	//Light
 	{
 		Color color(1, 1, 1);
-		Point3 origin(0.5, 2, -1);
+		Point3 origin(0.5, 1.25, -2);
 		PointLight* light = new PointLight(xform, color, origin, 1);
 		rayTracer->scene.lights.push_back(light);
 	}

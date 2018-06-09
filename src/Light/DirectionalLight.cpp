@@ -1,8 +1,8 @@
 #include "DirectionalLight.h"
 
-LightHit DirectionalLight::hit(Vec3& rd, RayHit& rh) {
-	LightHit lh(rd, rh);
-	lh.lightDir = direction;
+LightHit DirectionalLight::hit(Ray& ray, RayHit& rh) {
+	LightHit lh(ray, rh);
+	lh.direction = direction;
 	lh.color = color;
 	return lh;
 }

@@ -11,6 +11,7 @@
 
 #define INF std::numeric_limits<float>::infinity()
 #define PI2 6.28318530718 
+#define PI 3.14159265359
 
 Vec2 randomVec2();
 Vec3 randomUnitVec3(float radius = 1);
