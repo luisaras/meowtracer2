@@ -1,7 +1,8 @@
 #ifndef __VEC3__
 #define __VEC3__
 
-#include <iostream>
+#include <iostream>  
+using namespace std; 
 
 struct Vec3
 {
@@ -39,10 +40,6 @@ struct Vec3
      float LengthSq() const;
 
      bool Valid() const;
-
-     void Print() const {
-        std::cout << x << " " << y << " " << z;
-     }
 
 #ifdef USE_D3D
      operator D3DXVECTOR3() const;
@@ -96,6 +93,7 @@ Vec3 operator / (const Vec3 &Left, float Right);
 Vec3 operator + (const Vec3 &Left, const Vec3 &Right);
 Vec3 operator - (const Vec3 &Left, const Vec3 &Right);
 Vec3 operator - (const Vec3 &V);
+ostream& operator <<(ostream& os, const Vec3& vec);
 
 #define Point3 Vec3
 #define Color Vec3

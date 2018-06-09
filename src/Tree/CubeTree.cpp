@@ -7,7 +7,7 @@ using std::isnan;
 
 CubeTree::CubeTree(Hitable* hit) {
 	hitable = hit;
-	bounds = hitable->hitBox();
+	bounds = hit->hitBox();
 }
 
 CubeTree::CubeTree(CubeTree* l, CubeTree* r) {
@@ -25,11 +25,11 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 		return;
 	}
 	children = vector<CubeTree*>(hitables.size());
-	std::cout << children.size() <<std::endl;
 	for (uint i = 0; i < hitables.size(); i++) {
 		children[i] = new CubeTree(hitables[i]);
 	}
-	int depth = 0;
+
+	depth = 1;
 	for (int size = children.size(); size < maxNodes; size++) {
 		if (children.size() == 1) {
 			hitable = children[0]->hitable;
@@ -37,6 +37,8 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 			children = children[0]->children;
 			break;
 		}
+		if (depth >= maxDepth)
+			break;
 		int mini = 1, minj = 0;
 		float minvol = INF;
 		Box minbox;
@@ -64,6 +66,10 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 		children.push_back(parent);
 		if (parent->depth > depth)
 			depth = parent->depth;
+	}
+	for (uint i = 0; i < children.size(); i++) {
+		bounds.bounds[0] = Vec3::Minimize(bounds.bounds[0], children[i]->bounds.bounds[0]);
+  		bounds.bounds[1] = Vec3::Maximize(bounds.bounds[1], children[i]->bounds.bounds[1]);
 	}
 }
 

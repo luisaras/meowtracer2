@@ -11,6 +11,7 @@
 using std::string;
 using std::cout;
 using std::endl;
+using namespace std::chrono;
 
 /*
 
@@ -34,11 +35,15 @@ void printScene(string &fileName) {
 	string outputFile = "png/" + fileName + ".png";
 	Parser parser;
 	if (parser.load(inputFile)) {
-		time_t before = time(NULL);
+
+		auto before = high_resolution_clock::now(); // or use steady_clock if high_resolution_clock::is_steady is false
+
 		Color* colors = parser.renderer->render(parser.colCount, parser.rowCount);
-		time_t after = time(NULL);
-		double seconds = difftime(after, before);
-		cout << "Rendering done in " << seconds << " seconds." << endl; 
+
+		auto after = high_resolution_clock::now();
+		double time = duration<double>(after - before).count();
+
+		cout << "Rendering done in " << time << " seconds." << endl; 
 		Image img(parser.colCount, parser.rowCount, colors);
 		img.save(outputFile);
 		delete [] colors;

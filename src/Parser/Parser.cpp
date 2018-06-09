@@ -5,8 +5,10 @@
 #include "../Hitable/Sphere.h"
 #include "../Light/PointLight.h"
 
+#include <random>
+
 bool Parser::load(string& file) {
-	colCount = rowCount = 200;
+	colCount = rowCount = 1000;
 
 	Matrix4 xform = Matrix4::Identity();
 
@@ -25,6 +27,9 @@ bool Parser::load(string& file) {
 	renderer->tr = Color(1, 1, 1);
 	renderer->bl = Color(0, 0, 1);
 	renderer->br = Color(0, 0, 1);
+
+	rayTracer->treeDepth = 10;
+	rayTracer->rayCount = 1;
 	
 	// Material
 	{
@@ -49,13 +54,24 @@ bool Parser::load(string& file) {
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
+	std::default_random_engine generator (0);
+	for (int i = 0; i < 300; i++) {
+		Point3 center(1.5 * generator() / generator.max() - 0.25, 
+			1.5 * generator() / generator.max() - 0.25,
+			1.5 * generator() / generator.max() - 2.25);
+		Sphere* sphere = new Sphere(xform, center, 0.25 * generator() / generator.max());
+		sphere->material = rayTracer->scene.materials[0];
+		rayTracer->scene.hitables.push_back(sphere);
+	}
+
 	//Light
 	{
 		Color color(1, 1, 1);
-		Point3 origin(0.5, 2, -2);
+		Point3 origin(0.5, 2, -1);
 		PointLight* light = new PointLight(xform, color, origin, 1);
 		rayTracer->scene.lights.push_back(light);
 	}
+	rayTracer->scene.ambientColor = Color(0.05, 0.05, 0.1);
 
 	renderer->preprocess();
 	return true;

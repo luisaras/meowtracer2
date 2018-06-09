@@ -10,6 +10,7 @@ struct Material {
 	Color kd = Color(1, 1, 1);
 	Color ks = Color(1, 1, 1);
 	float shininess = 32;
+	float refraction = 0;
 };
 
 #endif

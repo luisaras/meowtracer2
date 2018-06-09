@@ -5,10 +5,13 @@ Written by Matthew Fisher
 Inline file for a 2-dimensional vector of floats
 */
 
-#pragma once
+#ifndef __VEC2__
+#define __VEC2__
 
-struct Vec2
-{
+#include <iostream>  
+using namespace std;  
+
+struct Vec2 {
     //
     // Initalization
     //
@@ -80,3 +83,6 @@ Vec2 operator / (const Vec2 &Left, float Right);
 Vec2 operator + (const Vec2 &Left, const Vec2 &Right);
 Vec2 operator - (const Vec2 &Left, const Vec2 &Right);
 Vec2 operator - (const Vec2 &V);
+ostream& operator << (ostream& os, const Vec2& vec);
+
+#endif

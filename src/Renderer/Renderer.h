@@ -10,13 +10,17 @@ using std::thread;
 class Renderer {
 protected:
 
-	std::mutex mutex;
+	std::mutex printLock;
+	std::mutex lineLock;
+	bool* lineProgress;
 	float progress;
 	int progressi;
 	int totalProgress;
 
 	void updateProgress();
-	void renderLines(Color* colors, int width, int height, int y1, int y2);
+	void threadRender(Color* colors, int width, int height);
+	void renderCell(Color* colors, int i, int j, int width, int height);
+
 	Color backgroundColor(float tCol, float tRow);
 	virtual Color getColor(Ray &initRay, float x, float y) = 0;
 
