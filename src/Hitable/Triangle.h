@@ -1,5 +1,5 @@
-#ifndef __TRIANGLE__
-#define __TRIANGLE__
+
+#pragma once
 
 #include "../Math/Vec2.h"
 #include "../Math/Vec3.h"
@@ -25,7 +25,3 @@ public:
 	Box hitBox();
 	Color getTexture(Vec2& uv);
 };
-
-
-
-#endif

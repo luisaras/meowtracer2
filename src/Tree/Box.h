@@ -1,5 +1,5 @@
-#ifndef __BOX__
-#define __BOX__
+
+#pragma once
 
 #include "../Math/Ray.h"
 
@@ -16,5 +16,3 @@ public:
 	Box cluster(Box& other);
 	float volume();
 };
-
-#endif

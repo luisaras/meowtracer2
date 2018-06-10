@@ -1,5 +1,5 @@
-#ifndef __PLIGHT__
-#define __PLIGHT__
+
+#pragma once
 
 #include "Light.h"
 #include "../Math/Matrix4.h"
@@ -10,8 +10,6 @@ private:
 	float length;
 public:
 	PointLight(Matrix4 &xform, Color &c, Point3 &o, float l) : 
-  		Light(c), origin(xform.TransformPoint(o)), length(l) {}
+  		Light(c), origin(xform.transformPoint(o)), length(l) {}
 	LightHit hit(Ray& ray, RayHit& rh);
 };
-
-#endif

@@ -14,7 +14,7 @@ Color BlinnPhong::getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh) {
 }
 
 Color BlinnPhong::diffuseColor (Light* light, LightHit &lh) {
-	float r = Vec3::Dot(lh.direction, lh.rayHit.normal);
+	float r = Vec3::dot(lh.direction, lh.rayHit.normal);
 	if (r > 0) {
 		Color &diff = lh.rayHit.hitable->material->kd;
 		return (diff * lh.color) * fmin(1.0, r);
@@ -24,8 +24,8 @@ Color BlinnPhong::diffuseColor (Light* light, LightHit &lh) {
 
 Color BlinnPhong::specularColor(Light* light, LightHit &lh) {
 	Vec3 half = lh.direction - lh.ray.direction;
-	half = Vec3::Normalize(half);
-	float r = Vec3::Dot(half, lh.rayHit.normal);
+	half = Vec3::normalize(half);
+	float r = Vec3::dot(half, lh.rayHit.normal);
 	if (r > 0) {
 		float s = lh.rayHit.hitable->material->shininess;
 		Color &spec = lh.rayHit.hitable->material->ks;

@@ -68,8 +68,8 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 			depth = parent->depth;
 	}
 	for (uint i = 0; i < children.size(); i++) {
-		bounds.bounds[0] = Vec3::Minimize(bounds.bounds[0], children[i]->bounds.bounds[0]);
-  		bounds.bounds[1] = Vec3::Maximize(bounds.bounds[1], children[i]->bounds.bounds[1]);
+		bounds.bounds[0] = Vec3::min(bounds.bounds[0], children[i]->bounds.bounds[0]);
+  		bounds.bounds[1] = Vec3::max(bounds.bounds[1], children[i]->bounds.bounds[1]);
 	}
 }
 

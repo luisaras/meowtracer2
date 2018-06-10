@@ -1,5 +1,5 @@
-#ifndef __HITABLE__
-#define __HITABLE__
+
+#pragma once
 
 #include "../Math/Vec2.h"
 #include "../Math/Ray.h"
@@ -25,5 +25,3 @@ struct RayHit {
 	Vec3 point, normal;
 	Vec2 uv;
 };
-
-#endif

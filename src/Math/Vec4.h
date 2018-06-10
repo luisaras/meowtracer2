@@ -1,10 +1,9 @@
-#ifndef __VEC4__
-#define __VEC4__
+
+#pragma once
 
 #include "Vec3.h"
 
-struct Vec4
-{
+struct Vec4 {
     //
     // Initalization
     //
@@ -30,23 +29,19 @@ struct Vec4
     // Accessors
     //
      float length() const;
-     float LengthSq() const;
+     float length2() const;
 
-     float& Element(int Index)
-    {
+     float& Element(int Index) {
         return ((float *)this)[Index];
     }
-     float Element(int Index) const
-    {
+     float Element(int Index) const {
         return ((float *)this)[Index];
     }
 
-     float& operator[](int Index)
-    {
+     float& operator[](int Index) {
         return ((float *)this)[Index];
     }
-     float operator[](int Index) const
-    {
+     float operator[](int Index) const {
         return ((float *)this)[Index];
     }
 
@@ -67,12 +62,12 @@ struct Vec4
     //
     // Static functions
     //
-     static Vec4 Normalize(const Vec4 &V);
-     static float Dot(const Vec4 &Left, const Vec4 &Right);
-     static Vec4 Lerp(const Vec4 &Left, const Vec4 &Right, float s);
-     static Vec4 Maximize(const Vec4 &Left, const Vec4 &Right);
-     static Vec4 Minimize(const Vec4 &Left, const Vec4 &Right);
-     static Vec4 Abs(const Vec4 &V);
+     static Vec4 normalize(const Vec4 &V);
+     static float dot(const Vec4 &Left, const Vec4 &Right);
+     static Vec4 lerp(const Vec4 &Left, const Vec4 &Right, float s);
+     static Vec4 max(const Vec4 &Left, const Vec4 &Right);
+     static Vec4 min(const Vec4 &Left, const Vec4 &Right);
+     static Vec4 abs(const Vec4 &V);
 };
 
 Vec4 operator * (const Vec4 &Left, float Right);
@@ -80,5 +75,3 @@ Vec4 operator * (float Right, const Vec4 &Left);
 Vec4 operator / (const Vec4 &Left, float Right);
 Vec4 operator + (const Vec4 &Left, const Vec4 &Right);
 Vec4 operator - (const Vec4 &Left, const Vec4 &Right);
-
-#endif

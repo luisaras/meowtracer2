@@ -1,5 +1,5 @@
-#ifndef __ORTCAMERA__
-#define __ORTCAMERA__
+
+#pragma once
 
 #include "Camera.h"
 
@@ -9,9 +9,7 @@ protected:
 	Vec3 getRayDirection(float i, float j);
 public:
 	OrthogonalCamera(Matrix4 &xform, Vec3 &h, Vec3 &v, Point3 &pos, Vec3 dir) : 
-    Camera(xform, h, v, pos), direction(xform.TransformVector(dir)) {}
+    Camera(xform, h, v, pos), direction(xform.transformVector(dir)) {}
 	Ray getRay(float i, float j);
 	float getDepth(Point3 p);
 };
-
-#endif

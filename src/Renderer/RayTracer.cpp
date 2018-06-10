@@ -34,18 +34,19 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		}
 
 		// Dielectric
+		// https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
 
 		float ior = rh.hitable->material->refraction;
 		// compute fresnel
 		float kr = fresnel(ray.direction, rh.normal, ior);
-		bool outside = Vec3::Dot(ray.direction, rh.normal) < 0;
+		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
 		Vec3 bias = E * rh.normal;
 
 		Vec3 refractionColor(0, 0, 0);
 		// compute refraction if it is not a case of total internal reflection
 		if (kr < 1) {
 			Vec3 refractionDir = refract(ray.direction, rh.normal, ior);
-			refractionDir = Vec3::Normalize(refractionDir);
+			refractionDir = Vec3::normalize(refractionDir);
 
 			Vec3 refractionRayOrig = outside ? rh.point - bias : rh.point + bias;
 			Ray refractionRay(refractionRayOrig, refractionDir);
@@ -53,7 +54,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		}
 
 		Vec3 reflectionDir = reflect(ray.direction, rh.normal);
-		reflectionDir = Vec3::Normalize(reflectionDir);
+		reflectionDir = Vec3::normalize(reflectionDir);
 
 		Vec3 reflectionRayOrig = outside ? rh.point + bias : rh.point - bias;
 		Ray reflectionRay(reflectionRayOrig, reflectionDir);

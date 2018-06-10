@@ -1,9 +1,10 @@
-#ifndef __MATERIAL__
-#define __MATERIAL__
+
+#pragma once
 
 #include "../Math/Vec3.h"
 
-struct Material {
+class Material {
+public:
 	// 0 = lambertian, 1 = metal, 2 = dielectric
 	int type = 0;
 
@@ -24,5 +25,3 @@ struct Material {
 	float fuzz = 0;
 
 };
-
-#endif

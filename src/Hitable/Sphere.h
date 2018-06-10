@@ -1,5 +1,5 @@
-#ifndef __SPHERE__
-#define __SPHERE__
+
+#pragma once
 
 #include "../Math/Matrix4.h"
 #include "Hitable.h"
@@ -18,5 +18,3 @@ public:
 	Box hitBox();
 	Color getTexture(Vec2& uv);
 };
-
-#endif

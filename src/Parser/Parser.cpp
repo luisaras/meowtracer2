@@ -11,7 +11,7 @@
 bool Parser::load(string& file) {
 	colCount = rowCount = 1000;
 
-	Matrix4 xform = Matrix4::Identity();
+	Matrix4 xform = Matrix4::identity();
 
 	// Camera
 	Vec3 h(1, 0, 0);

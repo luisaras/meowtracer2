@@ -1,5 +1,5 @@
-#ifndef __SCENE__
-#define __SCENE__
+
+#pragma once
 
 #include "../Material/Material.h"
 #include "../Material/Texture.h"
@@ -30,5 +30,3 @@ struct Scene {
 	}
 
 };
-
-#endif

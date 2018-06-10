@@ -59,10 +59,10 @@ void Mesh::clear() {
 
 void Mesh::transform(Matrix4& xform) {
 	for (uint i = 0; i < coords.size(); i++) {
-		coords[i] = xform.TransformPoint(coords[i]);
+		coords[i] = xform.transformPoint(coords[i]);
 	}
 	for (uint i = 0; i < normals.size(); i++) {
-		normals[i] = xform.TransformVector(normals[i]);
+		normals[i] = xform.transformVector(normals[i]);
 	}
 }
 
@@ -106,7 +106,7 @@ float Mesh::angleBetween(Vertex& v1, Vertex& v2, Vertex& v3) {
 	Vec3& p3 = getElement(coords, v3.coord, 1);
 	Vec3 a = p1 - p2;
 	Vec3 b = p3 - p2;
-	float angle = Vec3::Dot(a, b);
+	float angle = Vec3::dot(a, b);
 	return angle / (a.length() * b.length()) * rad2Deg;
 }
 

@@ -1,5 +1,5 @@
-#ifndef __SPHLIGHT__
-#define __SPHLIGHT__
+
+#pragma once
 
 #include "Light.h"
 
@@ -11,8 +11,6 @@ private:
   float size;
 public:
   SphereLight(Matrix4 &xform, Color &c, Point3 &o, Vec3 d, float a, float s) : 
-    Light(c), origin(xform.TransformPoint(o)), direction(-xform.TransformVector(d)), angle(a), size(s) {}
+    Light(c), origin(xform.transformPoint(o)), direction(-xform.transformVector(d)), angle(a), size(s) {}
   LightHit hit(Ray& ray, RayHit& rh);
 };
-
-#endif

@@ -22,25 +22,25 @@ Color CookTorrance::lightColor(Light* light, LightHit& lh, Color& texture) {
 
 	// Light
 	Vec3 Li = lh.color;
-	float n_wi = fmax(0, Vec3::Dot(n, wi));
+	float n_wi = fmax(0, Vec3::dot(n, wi));
 
 	// Diffuse
 	Color color = material->kd * Li * n_wi * texture;
 
 	if (n_wi > 0)  {
-		float n_w0 = fmax(0, Vec3::Dot(n, w0));
+		float n_w0 = fmax(0, Vec3::dot(n, w0));
 		if (n_w0 <= 0)
 			return color;
 
 		Vec3 h = wi + w0;
-		h = Vec3::Normalize(h);
+		h = Vec3::normalize(h);
 
-		float h_w0 = fmax(0, Vec3::Dot(h, w0));
+		float h_w0 = fmax(0, Vec3::dot(h, w0));
 		if (h_w0 <= 0)
 			return color;
 
-		float h_wi = fmax(0, Vec3::Dot(h, wi));
-		float n_h = fmax(0, Vec3::Dot(n, h));
+		float h_wi = fmax(0, Vec3::dot(h, wi));
+		float n_h = fmax(0, Vec3::dot(n, h));
 
 		// Fresnel reflectance
 		float f = pow(1.0 - h_wi, 5.0);

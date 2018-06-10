@@ -1,5 +1,5 @@
-#ifndef __CT__
-#define __CT__
+
+#pragma once
 
 #include "../Hitable/Hitable.h"
 #include "../Light/Light.h"
@@ -23,5 +23,3 @@ public:
 
 	~CubeTree();
 };
-
-#endif

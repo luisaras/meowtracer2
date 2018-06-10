@@ -1,9 +1,3 @@
-/*
-Matrix4.cpp
-Written by Matthew Fisher
-
-a 4x4 Matrix4 structure.  Used very often for affine vector transformations.
-*/
 
 #include "Matrix4.h"
 #include <cmath>
@@ -12,24 +6,19 @@ a 4x4 Matrix4 structure.  Used very often for affine vector transformations.
 
 using namespace std;
 
-Matrix4::Matrix4()
-{
+Matrix4::Matrix4() {
     
 }
 
-Matrix4::Matrix4(const Matrix4 &M)
-{
-    for(int Row = 0; Row < 4; Row++)
-    {
-        for(int Col = 0; Col < 4; Col++)
-        {
+Matrix4::Matrix4(const Matrix4 &M) {
+    for(int Row = 0; Row < 4; Row++) {
+        for(int Col = 0; Col < 4; Col++) {
             _Entries[Row][Col] = M[Row][Col];
         }
     }
 }
 
-Matrix4::Matrix4(const Vec3 &V0, const Vec3 &V1, const Vec3 &V2)
-{
+Matrix4::Matrix4(const Vec3 &V0, const Vec3 &V1, const Vec3 &V2) {
     _Entries[0][0] = V0.x;
     _Entries[0][1] = V0.y;
     _Entries[0][2] = V0.z;
@@ -51,19 +40,16 @@ Matrix4::Matrix4(const Vec3 &V0, const Vec3 &V1, const Vec3 &V2)
     _Entries[3][3] = 1.0f;
 }
 
-Matrix4& Matrix4::operator = (const Matrix4 &M)
-{
-    for(int Row = 0; Row < 4; Row++)
-    {
-        for(int Col = 0; Col < 4; Col++)
-        {
+Matrix4& Matrix4::operator = (const Matrix4 &M) {
+    for(int Row = 0; Row < 4; Row++) {
+        for(int Col = 0; Col < 4; Col++) {
             _Entries[Row][Col] = M[Row][Col];
         }
     }
     return (*this);
 }
 
-void Matrix4::Print() {
+void Matrix4::print() {
     for (int i = 0; i < 4; i++) {
         for(int j = 0; j < 4; j++) {
             std::cout << _Entries[i][j] << " ";
@@ -72,36 +58,29 @@ void Matrix4::Print() {
     }
 }
 
-Vec3 Matrix4::Transform(const Vec3 &v, float w) const
-{
+Vec3 Matrix4::transform(const Vec3 &v, float w) const {
     return Vec3( (v.x * _Entries[0][0] + v.y * _Entries[1][0] + v.z * _Entries[2][0] + _Entries[3][0]) * w,
                   (v.x * _Entries[0][1] + v.y * _Entries[1][1] + v.z * _Entries[2][1] + _Entries[3][1]) * w,
                   (v.x * _Entries[0][2] + v.y * _Entries[1][2] + v.z * _Entries[2][2] + _Entries[3][2]) * w);
 }
 
-Point3 Matrix4::TransformPoint(const Point3 &point) const
-{
+Point3 Matrix4::transformPoint(const Point3 &point) const {
     float w = point.x * _Entries[0][3] + point.y * _Entries[1][3] + point.z * _Entries[2][3] + _Entries[3][3];
-    if(w)
-    {
+    if(w) {
         const float invW = 1.0f / w;
-        return Transform(point, invW);
-    }
-    else
-    {
+        return transform(point, invW);
+    }else {
         return Vec3(0, 0, 0);
     }
 }
     
-Vec3 Matrix4::TransformVector(const Vec3 &normal) const
-{
+Vec3 Matrix4::transformVector(const Vec3 &normal) const {
     return Vec3(normal.x * _Entries[0][0] + normal.y * _Entries[1][0] + normal.z * _Entries[2][0],
                  normal.x * _Entries[0][1] + normal.y * _Entries[1][1] + normal.z * _Entries[2][1],
                  normal.x * _Entries[0][2] + normal.y * _Entries[1][2] + normal.z * _Entries[2][2]);
 }
 
-Matrix4 Matrix4::Inverse() const
-{
+Matrix4 Matrix4::inverse() const {
     //
     // Inversion by Cramer's rule.  Code taken from an Intel publication
     //
@@ -110,8 +89,7 @@ Matrix4 Matrix4::Inverse() const
     float src[16]; /* array of transpose source matrix */
     float det; /* determinant */
     /* transpose matrix */
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         src[i + 0 ] = (*this)[i][0];
         src[i + 4 ] = (*this)[i][1];
         src[i + 8 ] = (*this)[i][2];
@@ -184,10 +162,8 @@ Matrix4 Matrix4::Inverse() const
     det = 1.0f / det;
 
     Matrix4 FloatResult;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             FloatResult[i][j] = float(Result[i][j] * det);
         }
     }
@@ -198,25 +174,20 @@ Matrix4 Matrix4::Inverse() const
     //
     /*int i, j, k;
 
-    for (i = 1; i < 4; i++)
-    {
+    for (i = 1; i < 4; i++) {
         _Entries[0][i] /= _Entries[0][0];
     }
 
-    for (i = 1; i < 4; i++)
-    {
-        for (j = i; j < 4; j++)
-        {
+    for (i = 1; i < 4; i++) {
+        for (j = i; j < 4; j++) {
             float sum = 0.0;
-            for (k = 0; k < i; k++)
-            {
+            for (k = 0; k < i; k++) {
                 sum += _Entries[j][k] * _Entries[k][i];
             }
             _Entries[j][i] -= sum;
         }
         if (i == 4-1) continue;
-        for (j=i+1; j < 4; j++)
-        {
+        for (j=i+1; j < 4; j++) {
             float sum = 0.0;
             for (int k = 0; k < i; k++)
                 sum += _Entries[i][k]*_Entries[k][j];
@@ -228,13 +199,10 @@ Matrix4 Matrix4::Inverse() const
     //
     // Invert L
     //
-    for ( i = 0; i < 4; i++ )
-    {
-        for ( int j = i; j < 4; j++ )
-        {
+    for ( i = 0; i < 4; i++ ) {
+        for ( int j = i; j < 4; j++ ) {
             float x = 1.0;
-            if ( i != j )
-            {
+            if ( i != j ) {
                 x = 0.0;
                 for ( int k = i; k < j; k++ ) 
                     x -= _Entries[j][k]*_Entries[k][i];
@@ -246,10 +214,8 @@ Matrix4 Matrix4::Inverse() const
     //
     // Invert U
     //
-    for ( i = 0; i < 4; i++ )
-    {
-        for ( j = i; j < 4; j++ )
-        {
+    for ( i = 0; i < 4; i++ ) {
+        for ( j = i; j < 4; j++ ) {
             if ( i == j ) continue;
             float sum = 0.0;
             for ( int k = i; k < j; k++ )
@@ -261,10 +227,8 @@ Matrix4 Matrix4::Inverse() const
     //
     // Final Inversion
     //
-    for ( i = 0; i < 4; i++ )
-    {
-        for ( int j = 0; j < 4; j++ )
-        {
+    for ( i = 0; i < 4; i++ ) {
+        for ( int j = 0; j < 4; j++ ) {
             float sum = 0.0;
             for ( int k = ((i>j)?i:j); k < 4; k++ )  
                 sum += ((j==k)?1.0f:_Entries[j][k])*_Entries[k][i];
@@ -273,32 +237,24 @@ Matrix4 Matrix4::Inverse() const
     }*/
 }
 
-Matrix4 Matrix4::Transpose() const
-{
+Matrix4 Matrix4::transposed() const {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             Result[i2][i] = _Entries[i][i2];
         }
     }
     return Result;
 }
 
-Matrix4 Matrix4::Identity()
-{
+Matrix4 Matrix4::identity() {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
-            if(i == i2)
-            {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
+            if(i == i2) {
                 Result[i][i2] = 1.0f;
             }
-            else
-            {
+            else {
                 Result[i][i2] = 0.0f;
             }
         }
@@ -306,14 +262,13 @@ Matrix4 Matrix4::Identity()
     return Result;
 }
 
-Matrix4 Matrix4::Rotation(const Vec3 &_Basis1, const Vec3 &_Basis2, const Vec3 &_Basis3)
-{
+Matrix4 Matrix4::rotation(const Vec3 &_Basis1, const Vec3 &_Basis2, const Vec3 &_Basis3) {
     //
     // Verify everything is normalized
     //
-    Vec3 Basis1 = Vec3::Normalize(_Basis1);
-    Vec3 Basis2 = Vec3::Normalize(_Basis2);
-    Vec3 Basis3 = Vec3::Normalize(_Basis3);
+    Vec3 Basis1 = Vec3::normalize(_Basis1);
+    Vec3 Basis2 = Vec3::normalize(_Basis2);
+    Vec3 Basis3 = Vec3::normalize(_Basis3);
 
     Matrix4 Result;
     Result[0][0] = Basis1.x;
@@ -338,60 +293,27 @@ Matrix4 Matrix4::Rotation(const Vec3 &_Basis1, const Vec3 &_Basis2, const Vec3 &
     return Result;
 }
 
-Matrix4 Matrix4::Camera(const Vec3 &Eye, const Vec3 &_Look, const Vec3 &_Up, const Vec3 &_Right)
-{
-    //
-    // Verify everything is normalized
-    //
-    Vec3 Look = Vec3::Normalize(_Look);
-    Vec3 Up = Vec3::Normalize(_Up);
-    Vec3 Right = Vec3::Normalize(_Right);
-
-    Matrix4 Result;
-    Result[0][0] = Right.x;
-    Result[1][0] = Right.y;
-    Result[2][0] = Right.z;
-    Result[3][0] = -Vec3::Dot(Right, Eye);
-
-    Result[0][1] = Up.x;
-    Result[1][1] = Up.y;
-    Result[2][1] = Up.z;
-    Result[3][1] = -Vec3::Dot(Up, Eye);
-
-    Result[0][2] = Look.x;
-    Result[1][2] = Look.y;
-    Result[2][2] = Look.z;
-    Result[3][2] = -Vec3::Dot(Look, Eye);
-
-    Result[0][3] = 0.0f;
-    Result[1][3] = 0.0f;
-    Result[2][3] = 0.0f;
-    Result[3][3] = 1.0f;
-    return Result;
-}
-
-Matrix4 Matrix4::LookAt(const Vec3 &Eye, const Vec3 &At, const Vec3 &Up)
-{
+Matrix4 Matrix4::lookAt(const Vec3 &Eye, const Vec3 &At, const Vec3 &Up) {
     Vec3 XAxis, YAxis, ZAxis;
-    ZAxis = Vec3::Normalize(Eye - At);
-    XAxis = Vec3::Normalize(Vec3::Cross(Up, ZAxis));
-    YAxis = Vec3::Normalize(Vec3::Cross(ZAxis, XAxis));
+    ZAxis = Vec3::normalize(Eye - At);
+    XAxis = Vec3::normalize(Vec3::cross(Up, ZAxis));
+    YAxis = Vec3::normalize(Vec3::cross(ZAxis, XAxis));
 
     Matrix4 Result;
     Result[0][0] = XAxis.x;
     Result[1][0] = XAxis.y;
     Result[2][0] = XAxis.z;
-    Result[3][0] = -Vec3::Dot(XAxis,Eye);
+    Result[3][0] = -Vec3::dot(XAxis,Eye);
 
     Result[0][1] = YAxis.x;
     Result[1][1] = YAxis.y;
     Result[2][1] = YAxis.z;
-    Result[3][1] = -Vec3::Dot(YAxis,Eye);
+    Result[3][1] = -Vec3::dot(YAxis,Eye);
 
     Result[0][2] = ZAxis.x;
     Result[1][2] = ZAxis.y;
     Result[2][2] = ZAxis.z;
-    Result[3][2] = -Vec3::Dot(ZAxis,Eye);
+    Result[3][2] = -Vec3::dot(ZAxis,Eye);
 
     Result[0][3] = 0.0f;
     Result[1][3] = 0.0f;
@@ -400,8 +322,7 @@ Matrix4 Matrix4::LookAt(const Vec3 &Eye, const Vec3 &At, const Vec3 &Up)
     return Result;
 }
 
-Matrix4 Matrix4::Orthogonal(float Width, float Height, float ZNear, float ZFar)
-{
+Matrix4 Matrix4::orthogonal(float Width, float Height, float ZNear, float ZFar) {
     Matrix4 Result;
     Result[0][0] = 2.0f / Width;
     Result[1][0] = 0.0f;
@@ -425,8 +346,7 @@ Matrix4 Matrix4::Orthogonal(float Width, float Height, float ZNear, float ZFar)
     return Result;
 }
 
-Matrix4 Matrix4::Perspective(float Width, float Height, float ZNear, float ZFar)
-{
+Matrix4 Matrix4::perspective(float Width, float Height, float ZNear, float ZFar) {
     Matrix4 Result;
     Result[0][0] = 2.0f * ZNear / Width;
     Result[1][0] = 0.0f;
@@ -450,8 +370,7 @@ Matrix4 Matrix4::Perspective(float Width, float Height, float ZNear, float ZFar)
     return Result;
 }
 
-Matrix4 Matrix4::PerspectiveFov(float FOV, float Aspect, float ZNear, float ZFar)
-{
+Matrix4 Matrix4::perspectiveFOV(float FOV, float Aspect, float ZNear, float ZFar) {
     float Width = 1.0f / tanf(FOV/2.0f), Height = Aspect / tanf(FOV/2.0f);
 
     Matrix4 Result;
@@ -477,8 +396,7 @@ Matrix4 Matrix4::PerspectiveFov(float FOV, float Aspect, float ZNear, float ZFar
     return Result;
 }
 
-Matrix4 Matrix4::PerspectiveMultiFov(float FovX, float FovY, float ZNear, float ZFar)
-{
+Matrix4 Matrix4::perspectiveMultiFOV(float FovX, float FovY, float ZNear, float ZFar) {
     float Width = 1.0f / tanf(FovX / 2.0f), Height = 1.0f / tanf(FovY / 2.0f);
 
     Matrix4 Result;
@@ -504,16 +422,15 @@ Matrix4 Matrix4::PerspectiveMultiFov(float FovX, float FovY, float ZNear, float 
     return Result;
 }
 
-Matrix4 Matrix4::Rotation(const Vec3 &Axis, float Angle)
-{
+Matrix4 Matrix4::rotation(const Vec3 &Axis, float Angle) {
     float c = cosf(Angle);
     float s = sinf(Angle);
     float t = 1.0f - c;
 
-    Vec3 NormalizedAxis = Vec3::Normalize(Axis);
-    float x = NormalizedAxis.x;
-    float y = NormalizedAxis.y;
-    float z = NormalizedAxis.z;
+    Vec3 normalizedAxis = Vec3::normalize(Axis);
+    float x = normalizedAxis.x;
+    float y = normalizedAxis.y;
+    float z = normalizedAxis.z;
 
     Matrix4 Result;
     Result[0][0] = 1 + t*(x*x-1);
@@ -538,22 +455,19 @@ Matrix4 Matrix4::Rotation(const Vec3 &Axis, float Angle)
     return Result;
 }
 
-Matrix4 Matrix4::Rotation(float Pitch, float Yaw, float Roll)
-{
-    return RotationX(Pitch) * RotationY(Yaw) * RotationZ(Roll);
+Matrix4 Matrix4::rotation(float Pitch, float Yaw, float Roll) {
+    return rotationX(Pitch) * rotationY(Yaw) * rotationZ(Roll);
 }
 
-Matrix4 Matrix4::Rotation(const Vec3 &Axis, float Angle, const Vec3 &Center)
-{
-    return Translation(-Center) * Rotation(Axis, Angle) * Translation(Center);
+Matrix4 Matrix4::rotation(const Vec3 &Axis, float Angle, const Vec3 &Center) {
+    return translation(-Center) * rotation(Axis, Angle) * translation(Center);
 }
 
-Matrix4 Matrix4::RotationX(float Theta)
-{
+Matrix4 Matrix4::rotationX(float Theta) {
     float CosT = cosf(Theta);
     float SinT = sinf(Theta);
 
-    Matrix4 Result = Identity();
+    Matrix4 Result = identity();
     Result[1][1] = CosT;
     Result[1][2] = SinT;
     Result[2][1] = -SinT;
@@ -561,12 +475,11 @@ Matrix4 Matrix4::RotationX(float Theta)
     return Result;
 }
 
-Matrix4 Matrix4::RotationY(float Theta)
-{
+Matrix4 Matrix4::rotationY(float Theta) {
     float CosT = cosf(Theta);
     float SinT = sinf(Theta);
 
-    Matrix4 Result = Identity();
+    Matrix4 Result = identity();
     Result[0][0] = CosT;
     Result[0][2] = SinT;
     Result[2][0] = -SinT;
@@ -574,12 +487,11 @@ Matrix4 Matrix4::RotationY(float Theta)
     return Result;
 }
 
-Matrix4 Matrix4::RotationZ(float Theta)
-{
+Matrix4 Matrix4::rotationZ(float Theta) {
     float CosT = cosf(Theta);
     float SinT = sinf(Theta);
 
-    Matrix4 Result = Identity();
+    Matrix4 Result = identity();
     Result[0][0] = CosT;
     Result[0][1] = SinT;
     Result[1][0] = -SinT;
@@ -587,8 +499,7 @@ Matrix4 Matrix4::RotationZ(float Theta)
     return Result;
 }
 
-Matrix4 Matrix4::Scaling(const Vec3 &ScaleFactors)
-{
+Matrix4 Matrix4::scaling(const Vec3 &ScaleFactors) {
     Matrix4 Result;
     Result[0][0] = ScaleFactors.x;
     Result[1][0] = 0.0f;
@@ -612,8 +523,7 @@ Matrix4 Matrix4::Scaling(const Vec3 &ScaleFactors)
     return Result;
 }
 
-Matrix4 Matrix4::Translation(const Vec3 &Pos)
-{
+Matrix4 Matrix4::translation(const Vec3 &Pos) {
     Matrix4 Result;
     Result[0][0] = 1.0f;
     Result[1][0] = 0.0f;
@@ -637,41 +547,33 @@ Matrix4 Matrix4::Translation(const Vec3 &Pos)
     return Result;
 }
 
-Matrix4 Matrix4::ChangeOfBasis(const Vec3 &Source0, const Vec3 &Source1, const Vec3 &Source2, const Vec3 &SourceOrigin, 
-                               const Vec3 &Target0, const Vec3 &Target1, const Vec3 &Target2, const Vec3 &TargetOrigin)
-{
-    Matrix4 RotationComponent = Matrix4(Source0, Source1, Source2).Inverse() * Matrix4(Target0, Target1, Target2);
-    //Matrix4 TranslationComponent = Translation(TargetOrigin - SourceOrigin);
-    Matrix4 Result = Translation(-SourceOrigin) * RotationComponent * Translation(TargetOrigin);
+Matrix4 Matrix4::changeOfBasis(const Vec3 &Source0, const Vec3 &Source1, const Vec3 &Source2, const Vec3 &SourceOrigin, 
+                               const Vec3 &Target0, const Vec3 &Target1, const Vec3 &Target2, const Vec3 &TargetOrigin) {
+    Matrix4 RotationComponent = Matrix4(Source0, Source1, Source2).inverse() * Matrix4(Target0, Target1, Target2);
+    //Matrix4 TranslationComponent = translation(TargetOrigin - SourceOrigin);
+    Matrix4 Result = translation(-SourceOrigin) * RotationComponent * translation(TargetOrigin);
     return Result;
-    //return Translation(TargetOrigin - SourceOrigin);
+    //return translation(TargetOrigin - SourceOrigin);
 }
 
-Matrix4 Matrix4::Viewport(float Width, float Height)
-{
-    return Matrix4::Scaling(Vec3(Width * 0.5f, -Height * 0.5f, 1.0f)) * Matrix4::Translation(Vec3(Width * 0.5f, Height * 0.5f, 0.0f));
+Matrix4 Matrix4::viewport(float Width, float Height) {
+    return Matrix4::scaling(Vec3(Width * 0.5f, -Height * 0.5f, 1.0f)) * Matrix4::translation(Vec3(Width * 0.5f, Height * 0.5f, 0.0f));
 }
 
-/*Vec3 Matrix4::TransformPoint(const Vec3 &Point) const
-{
+/*Vec3 Matrix4::transformPoint(const Vec3 &Point) const {
     Vec4f UnprojectedResult = Vec4f(Point, 1.0f) * (*this);
-    if(UnprojectedResult.w == 0.0f || UnprojectedResult.w == 1.0f)
-    {
+    if(UnprojectedResult.w == 0.0f || UnprojectedResult.w == 1.0f) {
         return Vec3(UnprojectedResult.x, UnprojectedResult.y, UnprojectedResult.z);
-    }
-    else
-    {
+    } else {
         return Vec3(UnprojectedResult.x / UnprojectedResult.w,
                      UnprojectedResult.y / UnprojectedResult.w,
                      UnprojectedResult.z / UnprojectedResult.w);
     }
 }
 
-Vec3 Matrix4::TransformNormal(const Vec3 &Normal) const
-{
+Vec3 Matrix4::transformNormal(const Vec3 &Normal) const {
     Vec4f UnprojectedResult = Vec4f(Normal, 0.0f) * (*this);
-    if(UnprojectedResult.w == 0.0f)
-    {
+    if(UnprojectedResult.w == 0.0f) {
         UnprojectedResult.w = 1.0f;
     }
 
@@ -679,23 +581,18 @@ Vec3 Matrix4::TransformNormal(const Vec3 &Normal) const
                 UnprojectedResult.y / UnprojectedResult.w,
                 UnprojectedResult.z / UnprojectedResult.w);
 
-    if(UnprojectedResult.w < 0.0f)
-    {
+    if(UnprojectedResult.w < 0.0f) {
         Result = -Result;
     }
     return Result;
 }*/
 
-Matrix4 operator * (const Matrix4 &Left, const Matrix4 &Right)
-{
+Matrix4 operator * (const Matrix4 &Left, const Matrix4 &Right) {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             float Total = 0.0f;
-            for(int i3 = 0; i3 < 4; i3++)
-            {
+            for(int i3 = 0; i3 < 4; i3++) {
                 Total += Left[i][i3] * Right[i3][i2];
             }
             Result[i][i2] = Total;
@@ -704,60 +601,47 @@ Matrix4 operator * (const Matrix4 &Left, const Matrix4 &Right)
     return Result;
 }
 
-Matrix4 operator * (const Matrix4 &Left, float &Right)
-{
+Matrix4 operator * (const Matrix4 &Left, float &Right) {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             Result[i][i2] = Left[i][i2] * Right;
         }
     }
     return Result;
 }
 
-Matrix4 operator * (float &Left, const Matrix4 &Right)
-{
+Matrix4 operator * (float &Left, const Matrix4 &Right) {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             Result[i][i2] = Right[i][i2] * Left;
         }
     }
     return Result;
 }
 
-Vec4 operator * (const Vec4 &Right, const Matrix4 &Left)
-{
+Vec4 operator * (const Vec4 &Right, const Matrix4 &Left) {
     return Vec4(Right.x * Left[0][0] + Right.y * Left[1][0] + Right.z * Left[2][0] + Right.w * Left[3][0],
                 Right.x * Left[0][1] + Right.y * Left[1][1] + Right.z * Left[2][1] + Right.w * Left[3][1],
                 Right.x * Left[0][2] + Right.y * Left[1][2] + Right.z * Left[2][2] + Right.w * Left[3][2],
                 Right.x * Left[0][3] + Right.y * Left[1][3] + Right.z * Left[2][3] + Right.w * Left[3][3]);
 }
 
-Matrix4 operator + (const Matrix4 &Left, const Matrix4 &Right)
-{
+Matrix4 operator + (const Matrix4 &Left, const Matrix4 &Right) {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             Result[i][i2] = Left[i][i2] + Right[i][i2];
         }
     }
     return Result;
 }
 
-Matrix4 operator - (const Matrix4 &Left, const Matrix4 &Right)
-{
+Matrix4 operator - (const Matrix4 &Left, const Matrix4 &Right) {
     Matrix4 Result;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int i2 = 0; i2 < 4; i2++)
-        {
+    for(int i = 0; i < 4; i++) {
+        for(int i2 = 0; i2 < 4; i2++) {
             Result[i][i2] = Left[i][i2] - Right[i][i2];
         }
     }

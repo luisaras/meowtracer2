@@ -1,5 +1,5 @@
-#ifndef __TEXTURE__
-#define __TEXTURE__
+
+#pragma once
 
 #include "../Math/Vec3.h"
 #include "../Image/Image.h"
@@ -38,5 +38,3 @@ public:
   ImageTexture(std::string &fileName) : image(fileName) {}
   Color getColor(float u, float v, Point3 &p);
 };
-
-#endif

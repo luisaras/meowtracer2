@@ -25,11 +25,11 @@ Vec2 beckmannImportance(Vec2& e, float m2) {
 }
 
 Vec3 reflect(const Vec3 &dir, const Vec3 &normal) {
-	return dir - 2 * Vec3::Dot(dir, normal) * normal;
+	return dir - 2 * Vec3::dot(dir, normal) * normal;
 }
 
 Vec3 refract(const Vec3 &I, const Vec3 &N, float ior) {
-	float cosi = clamp(-1, 1, Vec3::Dot(I, N));
+	float cosi = clamp(-1, 1, Vec3::dot(I, N));
 	float etai = 1, etat = ior;
 	Vec3 n = N;
 	if (cosi < 0)
@@ -45,7 +45,7 @@ Vec3 refract(const Vec3 &I, const Vec3 &N, float ior) {
 
 float fresnel(const Vec3 &I, const Vec3 &N, float ior) {
 	float kr;
-	float cosi = clamp(-1, 1, Vec3::Dot(I, N));
+	float cosi = clamp(-1, 1, Vec3::dot(I, N));
 	float etai = 1, etat = ior;
 	if (cosi > 0)
 		std::swap(etai, etat);

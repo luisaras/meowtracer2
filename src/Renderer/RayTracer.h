@@ -1,5 +1,5 @@
-#ifndef __RT__
-#define __RT__
+
+#pragma once
 
 #include <vector>
 #include "Renderer.h"
@@ -30,5 +30,3 @@ public:
 	void preprocess();
 	Color getColor(Ray &initRay, float x, float y);
 };
-
-#endif

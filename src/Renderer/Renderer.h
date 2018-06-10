@@ -1,5 +1,5 @@
-#ifndef __REND__
-#define __REND__
+
+#pragma once
 
 #include "../Camera/Camera.h"
 #include <thread>
@@ -32,5 +32,3 @@ public:
 	virtual void preprocess() = 0;
 	Color* render(int width, int height);
 };
-
-#endif

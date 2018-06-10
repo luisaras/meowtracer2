@@ -1,5 +1,5 @@
-#ifndef __RAY__
-#define __RAY__
+
+#pragma once
 
 #include "Vec3.h"
 
@@ -20,5 +20,3 @@ public:
 	Point3 at(float n) { return origin + direction * n; }
 	void normalize() { direction = direction * (1.0 / direction.length()); }
 };
-
-#endif

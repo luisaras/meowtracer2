@@ -90,7 +90,7 @@ void Renderer::updateProgress() {
 }
 
 Color Renderer::backgroundColor(float tCol, float tRow)  {
-	Color top = Vec3::Lerp(tl, tr, tCol);
-	Color bottom = Vec3::Lerp(bl, br, tCol);
-	return Vec3::Lerp(bottom, top, tRow);
+	Color top = Vec3::lerp(tl, tr, tCol);
+	Color bottom = Vec3::lerp(bl, br, tCol);
+	return Vec3::lerp(bottom, top, tRow);
 }

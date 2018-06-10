@@ -1,5 +1,5 @@
-#ifndef __COOKT__
-#define __COOKT__
+
+#pragma once
 
 #include "ReflectionModel.h"
 
@@ -9,5 +9,3 @@ protected:
 public:
 	Color getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rayHit);
 };
-
-#endif

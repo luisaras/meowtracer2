@@ -1,5 +1,5 @@
-#ifndef __SLIGHT__
-#define __SLIGHT__
+
+#pragma once
 
 #include "Light.h"
 #include "../Math/Matrix4.h"
@@ -11,11 +11,9 @@ private:
   float angle;
 public:
   SpotLight(Matrix4 &xform, Color &c, Point3 &o, Vec3 d, float a) : 
-    Light(c), origin(xform.TransformPoint(o)), direction(-xform.TransformVector(d)), angle(a) {
-      direction = Vec3::Normalize(direction);
+    Light(c), origin(xform.transformPoint(o)), direction(-xform.transformVector(d)), angle(a) {
+      direction = Vec3::normalize(direction);
     }
     LightHit hit(Ray& ray, RayHit& rh);
 
 };
-
-#endif

@@ -1,9 +1,3 @@
-/*
-Vec4.inl
-Written by Matthew Fisher
-
-Inline file for a 4-dimensional vector of floats
-*/
 
 #include "Vec4.h"
 #include <cmath>
@@ -44,11 +38,11 @@ float Vec4::length() const {
     return sqrtf(x * x + y * y + z * z + w * w);
 }
 
-float Vec4::LengthSq() const {
+float Vec4::length2() const {
     return x * x + y * y + z * z + w * w;
 }
 
- Vec4 Vec4::Normalize(const Vec4 &V) {
+ Vec4 Vec4::normalize(const Vec4 &V) {
     float Len = V.length();
     if(Len == 0.0f) {
         return V;
@@ -59,15 +53,15 @@ float Vec4::LengthSq() const {
 }
 
 
-float Vec4::Dot(const Vec4 &Left, const Vec4 &Right) {
+float Vec4::dot(const Vec4 &Left, const Vec4 &Right) {
     return (Left.x * Right.x + Left.y * Right.y + Left.z * Right.z + Left.w * Right.w);
 }
 
-Vec4 Vec4::Lerp(const Vec4 &Left, const Vec4 &Right, float s) {
+Vec4 Vec4::lerp(const Vec4 &Left, const Vec4 &Right, float s) {
     return (Left + s * (Right - Left));
 }
 
-Vec4 Vec4::Maximize(const Vec4 &Left, const Vec4 &Right) {
+Vec4 Vec4::max(const Vec4 &Left, const Vec4 &Right) {
     Vec4 Result = Right;
     if(Left.x > Right.x) Result.x = Left.x;
     if(Left.y > Right.y) Result.y = Left.y;
@@ -76,7 +70,7 @@ Vec4 Vec4::Maximize(const Vec4 &Left, const Vec4 &Right) {
     return Result;
 }
 
-Vec4 Vec4::Minimize(const Vec4 &Left, const Vec4 &Right) {
+Vec4 Vec4::min(const Vec4 &Left, const Vec4 &Right) {
     Vec4 Result = Right;
     if(Left.x < Right.x) Result.x = Left.x;
     if(Left.y < Right.y) Result.y = Left.y;
@@ -85,7 +79,7 @@ Vec4 Vec4::Minimize(const Vec4 &Left, const Vec4 &Right) {
     return Result;
 }
 
-Vec4 Vec4::Abs(const Vec4 &V) {
+Vec4 Vec4::abs(const Vec4 &V) {
     Vec4 Result = V;
     if(Result.x < 0.0f) {
         Result.x = -Result.x;

@@ -1,5 +1,5 @@
-#ifndef __LIGHT__
-#define __LIGHT__
+
+#pragma once
 
 #include "../Math/Vec3.h"
 #include "../Math/Matrix4.h"
@@ -23,5 +23,3 @@ public:
 	virtual ~Light() {}
 
 };
-
-#endif

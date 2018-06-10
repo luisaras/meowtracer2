@@ -1,5 +1,5 @@
-#ifndef __IMAGE__
-#define __IMAGE__
+
+#pragma once
 
 #include "../Math/Vec3.h"
 #include <png.h>
@@ -23,5 +23,3 @@ public:
 	bool save(string& file);
 	bool load(string& file);
 };
-
-#endif

@@ -5,21 +5,21 @@
 #define PI 3.14159265359
 
 Sphere::Sphere(Matrix4 &xform, Point3 p, float rad) : center(p), radius(rad) {	
-	Matrix4 translation = Matrix4::Translation(center);
-	Matrix4 scaling = Matrix4::Scaling(radius);
+	Matrix4 translation = Matrix4::translation(center);
+	Matrix4 scaling = Matrix4::scaling(radius);
 	transform = scaling * translation;
 	transform = transform * xform;
-	invt = transform.Inverse();
+	invt = transform.inverse();
 }
 
 Box Sphere::hitBox() {
 	// Bounding box
-	Matrix4 s = Matrix4::Identity();
+	Matrix4 s = Matrix4::identity();
 	s[3][3] = -1;
-	Matrix4 si = s.Inverse();
+	Matrix4 si = s.inverse();
 
 	Matrix4 &m = transform;
-	Matrix4 mt = m.Transpose();
+	Matrix4 mt = m.transposed();
 
 	Vec3 min, max;
 	Matrix4 r = mt * si * m;
@@ -40,12 +40,12 @@ Color Sphere::getTexture(Vec2& uv) {
 RayHit Sphere::hit(Ray &ray) {
 	RayHit rh;
 
-	Point3 o = invt.TransformPoint(ray.origin);
-	Vec3 d = invt.TransformVector(ray.direction);
+	Point3 o = invt.transformPoint(ray.origin);
+	Vec3 d = invt.transformVector(ray.direction);
 
-	float a = Vec3::Dot(d, d);
-	float b = 2 * Vec3::Dot(d, o);
-	float c = Vec3::Dot(o, o) - 1;
+	float a = Vec3::dot(d, d);
+	float b = 2 * Vec3::dot(d, o);
+	float c = Vec3::dot(o, o) - 1;
 	float delta = b * b - 4 * a * c;
 
 	if (delta >= 0) {
@@ -74,8 +74,8 @@ RayHit Sphere::hit(Ray &ray) {
 			//float v = y / 2 + 0.5;
 			//rh.texture = material->texture(u, v, rh.normal);
 
-			rh.normal = transform.TransformVector(rh.normal);
-			rh.normal = Vec3::Normalize(rh.normal);
+			rh.normal = transform.transformVector(rh.normal);
+			rh.normal = Vec3::normalize(rh.normal);
 			rh.hitable = this;
 		}
 	} else {

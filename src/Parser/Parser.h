@@ -1,5 +1,5 @@
-#ifndef __PARSER__
-#define __PARSER__
+
+#pragma once
 
 #include "../Math/Vec3.h"
 #include "../Renderer/Renderer.h"
@@ -14,5 +14,3 @@ public:
 	Renderer* renderer;
 	bool load(string& file);
 };
-
-#endif

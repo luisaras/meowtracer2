@@ -1,5 +1,5 @@
-#ifndef __CAMERA__
-#define __CAMERA__
+
+#pragma once
 
 #include "../Math/Ray.h"
 #include "../Math/Matrix4.h"
@@ -11,13 +11,11 @@ protected:
 	Point3 position;
 
 	Camera(Matrix4 &xform, Vec3 &h, Vec3 &v, Point3 &pos) : 
-	    horizontal(xform.TransformVector(h)), 
-	    vertical(xform.TransformVector(v)), 
-	    position(xform.TransformPoint(pos)) {}
+	    horizontal(xform.transformVector(h)), 
+	    vertical(xform.transformVector(v)), 
+	    position(xform.transformPoint(pos)) {}
 public:
 	virtual Ray getRay(float i, float j) = 0;
 	virtual float getDepth(Point3 p) = 0;
 	Point3 pixelPosition(float i, float j) { return position + horizontal * i + vertical * j; }
 };
-
-#endif

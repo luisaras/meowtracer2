@@ -1,11 +1,10 @@
-#ifndef __VEC3__
-#define __VEC3__
+
+#pragma once
 
 #include <iostream>  
 using namespace std; 
 
-struct Vec3
-{
+struct Vec3 {
     //
     // Initalization
     //
@@ -31,26 +30,24 @@ struct Vec3
     //
     // Normalization
     //
-     void SetLength(float NewLength);
+     void setLength(float NewLength);
 
     //
     // Accessors
     //
      float length() const;
-     float LengthSq() const;
+     float length2() const;
 
-     bool Valid() const;
+     bool valid() const;
 
 #ifdef USE_D3D
      operator D3DXVECTOR3() const;
 #endif
 
-     float& operator[](int Index)
-    {
+     float& operator[](int Index) {
         return ((float *)this)[Index];
     }
-     float operator[](int Index) const
-    {
+     float operator[](int Index) const {
         return ((float *)this)[Index];
     }
 
@@ -70,20 +67,19 @@ struct Vec3
     //
     // Static functions
     //
-     static Vec3 Normalize(const Vec3 &V);
-     static Vec3 StdRandomVector();
-     static Vec3 StdRandomNormal();
-     static Vec3 Cross(const Vec3 &Left, const Vec3 &Right);
-     static Vec3 DirectProduct(const Vec3 &Left, const Vec3 &Right);
-     static float Dot(const Vec3 &Left, const Vec3 &Right);
-     static float Dist(const Vec3 &Left, const Vec3 &Right);
-     static float DistSq(const Vec3 &Left, const Vec3 &Right);
-     static Vec3 Lerp(const Vec3 &Left, const Vec3 &Right, float s);
-     static Vec3 Maximize(const Vec3 &Left, const Vec3 &Right);
-     static Vec3 Minimize(const Vec3 &Left, const Vec3 &Right);
+     static Vec3 normalize(const Vec3 &V);
+     static Vec3 randomVector();
+     static Vec3 randomNormal();
+     static Vec3 cross(const Vec3 &Left, const Vec3 &Right);
+     static float dot(const Vec3 &Left, const Vec3 &Right);
+     static float distance(const Vec3 &Left, const Vec3 &Right);
+     static float distance2(const Vec3 &Left, const Vec3 &Right);
+     static Vec3 lerp(const Vec3 &Left, const Vec3 &Right, float s);
+     static Vec3 max(const Vec3 &Left, const Vec3 &Right);
+     static Vec3 min(const Vec3 &Left, const Vec3 &Right);
      //static bool WithinRect(const Vec3 &Pt, const Rectangle3f &Rect);
-     static Vec3 SphericalFromCartesian(const Vec3 &Cartesian);
-     static Vec3 CartesianFromSpherical(const Vec3 &Spherical);
+     static Vec3 cartesian2Spherical(const Vec3 &Cartesian);
+     static Vec3 spherical2Cartesian(const Vec3 &Spherical);
 };
 
 Vec3 operator* (const Vec3 &Left, float Right);
@@ -97,5 +93,3 @@ ostream& operator <<(ostream& os, const Vec3& vec);
 
 #define Point3 Vec3
 #define Color Vec3
-
-#endif

@@ -1,5 +1,5 @@
-#ifndef __MESH__
-#define __MESH__
+
+#pragma once
 
 #include "../Hitable/Triangle.h"
 #include "../Material/Material.h"
@@ -57,5 +57,3 @@ public:
 	void getTriangles(vector<Triangle>& v, Material* mat);
 
 };
-
-#endif

@@ -8,8 +8,8 @@ private:
 	Vec3 direction;
 public:
 	DirectionalLight(Matrix4 &xform, Color &c, Vec3 &dir) : 
-    Light(c), direction(-xform.TransformVector(dir)) {
-    	direction = Vec3::Normalize(direction);
+    Light(c), direction(-xform.transformVector(dir)) {
+    	direction = Vec3::normalize(direction);
     }
 	LightHit hit(Ray& ray, RayHit& rh);
 };

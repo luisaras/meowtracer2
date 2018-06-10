@@ -1,11 +1,13 @@
 #include "Perlin.h"
 #include <cmath>
 
+// https://github.com/petershirley/raytracingthenextweek/blob/master/perlin.h
+
 Vec3* perlin_generate() {  
     Vec3 * p = new Vec3[256];
     for ( int i = 0; i < 256; ++i ) {
       p[i] = Vec3(-1 + 2*drand48(), -1 + 2*drand48(), -1 + 2*drand48());
-      p[i] = Vec3::Normalize(p[i]);
+      p[i] = Vec3::normalize(p[i]);
     }
     return p;
 }
@@ -44,7 +46,7 @@ inline float perlin_interp(Vec3 c[2][2][2], float u, float v, float w) {
               Vec3 weight_v(u-i, v-j, w-k);
               accum += (i*uu + (1-i)*(1-uu))*
                   (j*vv + (1-j)*(1-vv))*
-                  (k*ww + (1-k)*(1-ww))*Vec3::Dot(c[i][j][k], weight_v);
+                  (k*ww + (1-k)*(1-ww))*Vec3::dot(c[i][j][k], weight_v);
           }
   return accum;
 }
