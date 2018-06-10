@@ -5,7 +5,7 @@
 
 class Material {
 public:
-	// 0 = lambertian, 1 = metal, 2 = dielectric
+	// 0 = phong, 1 = lambertian, 2 = metal, 3 = dielectric
 	int type = 0;
 
 	// Phong
@@ -14,6 +14,7 @@ public:
 	Color kd = Color(1, 1, 1);
 	Color ks = Color(1, 1, 1);
 	float shininess = 32;
+	float reflexivity = 0;
 
 	// Cook-Torrance
 	float roughness = 0.1;

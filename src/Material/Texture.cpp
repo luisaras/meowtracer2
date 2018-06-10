@@ -2,13 +2,6 @@
 #include "../Math/Perlin.h"
 
 Color CheckersTexture::getColor(float u, float v, Point3 &p) {
-  /*
-  float sines = sin(10*p.x)*sin(10*p.y)*sin(10*p.z);
-  if (sines < 0)
-      return color1;
-  else
-      return color2;
-  */
   int x = floor(u * repeatx);
   int y = repeaty - floor(v * repeaty);
   x = ((x % repeatx) + repeatx) % repeatx;
@@ -28,5 +21,5 @@ Color ImageTexture::getColor(float u, float v, Point3 &p) {
 }
 
 Color PerlinTexture::getColor(float u, float v, Point3 &p) {
-  return Vec3(1,1,1)*0.5*(1 + sin(scale*p.x + 5*perlin(scale*p)));
+  return Vec3(1, 1, 1) * 0.5 * (1 + sin(scale*p.x + 5 * perlin(scale*p)));
 }
