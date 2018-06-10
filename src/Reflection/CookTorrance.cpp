@@ -2,15 +2,15 @@
 #include "../Math/Util.h"
 
 Color CookTorrance::getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh) {
-	Color finalColor(0, 0, 0);
 	Color texture = rh.hitable->getTexture(rh.uv);
+	Color finalColor(0, 0, 0);
 	for (uint i = 0; i < scene.lights.size(); i++) {
 		LightHit lh = scene.lights[i]->hit(ray, rh);
 		if (!tree->hitsLight(scene.lights[i], lh)) {
 			finalColor += lightColor(scene.lights[i], lh, texture);
 		}
 	}
-	return finalColor + rh.hitable->material->ka * scene.ambientColor + rh.hitable->material->ke;
+	return finalColor + rh.hitable->material->ka * scene.ambientColor;
 }
 
 Color CookTorrance::lightColor(Light* light, LightHit& lh, Color& texture) {

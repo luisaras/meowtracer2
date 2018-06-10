@@ -10,6 +10,9 @@
 using std::vector;
 
 class RayTracer : public Renderer {
+protected:
+	Color getColor(Ray &ray, float x, float y, int depth);
+	
 public:
 	Scene scene;
 	ReflectionModel* reflectionModel;
@@ -18,7 +21,7 @@ public:
 	// Parameters
 	int treeDepth = 1;
 	int treeSize = INT_MAX;
-	int rayCount = 1;
+	int rayDepth = 1;
 
 	RayTracer(Camera* cam, ReflectionModel* rm) : reflectionModel(rm) { camera = cam; }
 	~RayTracer();

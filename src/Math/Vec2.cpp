@@ -68,7 +68,7 @@ Vec2 Vec2::StdRandomNormal() {
     return Normalize(StdRandomVector());
 }
 
-float Vec2::Length() const {
+float Vec2::length() const {
     return sqrtf(x * x + y * y);
 }
 
@@ -81,7 +81,7 @@ Vec2 Vec2::Round() const {
 }
 
 Vec2 Vec2::Normalize(const Vec2 &V) {
-    float Len = V.Length();
+    float Len = V.length();
     if(Len == 0.0f) {
         return V;
     } else {
@@ -127,8 +127,8 @@ Vec2 Vec2::Reflect(const Vec2 &Input, const Vec2 &ReflectAbout) {
 }
 
 float Vec2::AngleBetween(const Vec2 &Left, const Vec2 &Right) {
-    float LeftLength = Left.Length();
-    float RightLength = Right.Length();
+    float LeftLength = Left.length();
+    float RightLength = Right.length();
     if(LeftLength > 0.0f && RightLength > 0.0f) {
         return acosf(std::min(std::max(Vec2::Dot(Left, Right) / LeftLength / RightLength, -1.0f), 1.0f));
     } else {
@@ -137,7 +137,7 @@ float Vec2::AngleBetween(const Vec2 &Left, const Vec2 &Right) {
 }
 
 float Vec2::Dist(const Vec2 &Left, const Vec2 &Right) {
-    return (Right - Left).Length();
+    return (Right - Left).length();
 }
 
 float Vec2::DistSq(const Vec2 &Left, const Vec2 &Right) {

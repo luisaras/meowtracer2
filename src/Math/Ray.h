@@ -18,7 +18,7 @@ public:
     sign[2] = (invdir.z < 0); 
   }
 	Point3 at(float n) { return origin + direction * n; }
-	void normalize() { direction = direction * (1.0 / direction.Length()); }
+	void normalize() { direction = direction * (1.0 / direction.length()); }
 };
 
 #endif

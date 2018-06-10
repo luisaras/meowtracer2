@@ -6,5 +6,5 @@ Ray PerspectiveCamera::getRay(float i, float j) {
 }
 
 float PerspectiveCamera::getDepth(Point3 p) {
-	return (p - lens).Length();
+	return (p - lens).length();
 }

@@ -38,7 +38,7 @@ struct Vec2 {
     //
     // Accessors
     //
-    float Length() const;
+    float length() const;
     float LengthSq() const;
 
     //

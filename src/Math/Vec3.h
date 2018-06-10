@@ -36,7 +36,7 @@ struct Vec3
     //
     // Accessors
     //
-     float Length() const;
+     float length() const;
      float LengthSq() const;
 
      bool Valid() const;

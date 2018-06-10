@@ -29,7 +29,7 @@ struct Vec4
     //
     // Accessors
     //
-     float Length() const;
+     float length() const;
      float LengthSq() const;
 
      float& Element(int Index)

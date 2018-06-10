@@ -46,7 +46,7 @@ Vec3::Vec3(const Vec3 &V) {
     return Normalize(StdRandomVector());
 }
 
- float Vec3::Length() const {
+ float Vec3::length() const {
     return sqrtf(x * x + y * y + z * z);
 }
 
@@ -59,7 +59,7 @@ Vec3::Vec3(const Vec3 &V) {
 }
 
  Vec3 Vec3::Normalize(const Vec3 &V) {
-    float Len = V.Length();
+    float Len = V.length();
     if(Len == 0.0f) {
         return V;
     } else {
@@ -69,7 +69,7 @@ Vec3::Vec3(const Vec3 &V) {
 }
 
  void Vec3::SetLength(float NewLength) {
-    float Len = Length();
+    float Len = length();
     if(Len != 0.0f) {
         float Factor = NewLength / Len;
         x *= Factor;
@@ -123,7 +123,7 @@ Vec3::Vec3(const Vec3 &V) {
 
  Vec3 Vec3::SphericalFromCartesian(const Vec3 &Cartesian) {
     Vec3 Result;
-    Result.x = Cartesian.Length();
+    Result.x = Cartesian.length();
     Result.y = atan2f(Cartesian.y, Cartesian.x);
     if(Result.x == 0.0f) {
         Result.z = 0.0f;

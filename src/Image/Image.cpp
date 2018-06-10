@@ -23,11 +23,8 @@
 #include <iostream>
 #include <algorithm>
 
-using std::min;
-using std::max;
-
 char toByte(float a) {
-    a = max(min(sqrt(a), 1.0), 0.0);
+    a = fmax(fmin(sqrt(a), 1.0), 0.0);
     return (char) rint(a * 255);
 }
 

@@ -107,7 +107,7 @@ float Mesh::angleBetween(Vertex& v1, Vertex& v2, Vertex& v3) {
 	Vec3 a = p1 - p2;
 	Vec3 b = p3 - p2;
 	float angle = Vec3::Dot(a, b);
-	return angle / (a.Length() * b.Length()) * rad2Deg;
+	return angle / (a.length() * b.length()) * rad2Deg;
 }
 
 string Mesh::loadFace(vector<string> &words) {
