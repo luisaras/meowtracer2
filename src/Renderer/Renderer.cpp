@@ -59,7 +59,7 @@ void Renderer::threadRender(Color* colors, int width, int height) {
 
 void Renderer::renderCell(Color* colors, int i, int j, int width, int height) {
 	Color c(0, 0, 0);
-	if (sampleCount > 1) 
+	if (sampleCount > 1) {
 		for(int s = 0; s < sampleCount; s++) {
 			float pixelx = 1.0 * rand() / RAND_MAX + i;
 			float pixely = 1.0 * rand() / RAND_MAX + (height - j - 1);
@@ -69,7 +69,7 @@ void Renderer::renderCell(Color* colors, int i, int j, int width, int height) {
 			ray.normalize();
 			c += getColor(ray, x, y) / sampleCount;
 		}
-	else {
+	} else {
 		float pixelx = 0.5 + i;
 		float pixely = 0.5 + (height - j - 1);
 		float x = pixelx / (width - 1);

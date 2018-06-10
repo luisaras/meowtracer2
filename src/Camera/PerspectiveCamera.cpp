@@ -2,7 +2,7 @@
 
 Ray PerspectiveCamera::getRay(float i, float j) {
   Vec3 origin = pixelPosition(i, j);
-	return Ray(lens, origin - lens);
+	return Ray(lens, origin - lens, refraction);
 }
 
 float PerspectiveCamera::getDepth(Point3 p) {

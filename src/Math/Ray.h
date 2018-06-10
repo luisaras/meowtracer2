@@ -8,8 +8,9 @@ public:
   Point3 origin; 
   Vec3 direction;
   Vec3 invdir;
+  float refraction;
   int sign[3];
-	Ray(Point3 o = Point3(), Vec3 d = Vec3()) : origin(o), direction(d) {
+	Ray(Point3 o, Vec3 d, float ref) : origin(o), direction(d), refraction(ref) {
     invdir.x = 1 / direction.x;
     invdir.y = 1 / direction.y;
     invdir.z = 1 / direction.z;

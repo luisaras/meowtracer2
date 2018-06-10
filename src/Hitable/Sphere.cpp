@@ -49,7 +49,7 @@ RayHit Sphere::hit(Ray &ray) {
 	float delta = b * b - 4 * a * c;
 
 	if (delta >= 0) {
-		Ray tRay = Ray(o, d);
+		Ray tRay = Ray(o, d, 1);
 		float sqrtdelta = std::sqrt(delta);
 		float t1 = (-b - sqrtdelta) / (2 * a);
 		float t2 = (-b + sqrtdelta) / (2 * a);

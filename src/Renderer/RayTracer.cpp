@@ -22,7 +22,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 			if (mat->reflexivity > 0) {
 				Vec3 bias = E * rh.normal;
 				Vec3 reflected = reflect(ray.direction, rh.normal);
-				Ray reflectedRay(rh.point + bias, reflected);
+				Ray reflectedRay(rh.point + bias, reflected, ray.refraction);
 				color = color * (1 - mat->reflexivity) + 
 					getColor(reflectedRay, x, y, depth - 1) * mat->reflexivity;
 			}
@@ -35,37 +35,36 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		// Lambertian
 		if (mat->type == 1) {
 			Vec3 direction = randomUnitVec3() + rh.normal;
-			Ray scattered(rh.point + bias, direction);
+			Ray scattered(rh.point + bias, direction, ray.refraction);
 			return mat->ke + color * getColor(scattered, x, y, depth - 1);
-		}
-
-		Vec3 reflected = reflect(ray.direction, rh.normal);
-		Ray reflectedRay(rh.point + bias, reflected);
-
-		// Metal
-		if (mat->type == 2) {
-			reflectedRay.direction += randomUnitVec3(mat->fuzz);
-			return color * getColor(reflectedRay, x, y, depth - 1);
-		}
-
-		// Dielectric
-		float fr = fresnel(ray.direction, rh.normal, mat->refraction);
-		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
-		Vec3 refractionColor(0, 0, 0);
-		if (fr < 1) {
-			Vec3 refractionDir = refract(ray.direction, rh.normal, mat->refraction);
-			refractionDir = Vec3::normalize(refractionDir);
-			Vec3 refractionRayOrig = outside ? rh.point - bias : rh.point + bias;
-			Ray refractionRay(refractionRayOrig, refractionDir);
-			refractionColor = getColor(refractionRay, x, y, depth - 1);
 		}
 
 		Vec3 reflectionDir = reflect(ray.direction, rh.normal);
 		reflectionDir = Vec3::normalize(reflectionDir);
+		Ray reflectedRay(rh.point, reflectionDir, ray.refraction);
 
-		Vec3 reflectionRayOrig = outside ? rh.point + bias : rh.point - bias;
-		Ray reflectionRay(reflectionRayOrig, reflectionDir);
-		Vec3 reflectionColor = getColor(reflectionRay, x, y, depth - 1);
+		// Metal
+		if (mat->type == 2) {
+			reflectedRay.direction += randomUnitVec3(mat->fuzz);
+			reflectedRay.origin += bias;
+			return color * getColor(reflectedRay, x, y, depth - 1);
+		}
+
+		// Dielectric
+		float refr = mat->refraction / ray.refraction;
+		float fr = fresnel(ray.direction, rh.normal, refr);
+		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
+		Vec3 refractionColor(0, 0, 0);
+		if (fr < 1) {
+			Vec3 refractedDir = refract(ray.direction, rh.normal, refr);
+			refractedDir = Vec3::normalize(refractedDir);
+			Vec3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
+			Ray refractedRay(refractedRayOrig, refractedDir, mat->refraction);
+			refractionColor = getColor(refractedRay, x, y, depth - 1);
+		}
+
+		outside ? reflectedRay.origin += bias : reflectedRay.origin -= bias;
+		Vec3 reflectionColor = getColor(reflectedRay, x, y, depth - 1);
 
 		return color * (reflectionColor * fr + refractionColor * (1 - fr));
 	} else {

@@ -18,7 +18,8 @@ bool Parser::load(string& file) {
 	Vec3 v(0, 1, 0);
 	Point3 pos(0, 0, 0);
 	Vec3 lens(0.5, 0.5, 1);
-	Camera* cam = new PerspectiveCamera(xform, h, v, pos, lens);
+	float initRef = 1;
+	Camera* cam = new PerspectiveCamera(xform, h, v, pos, lens, initRef);
 
 	// Renderer
 	ReflectionModel* rm = new BlinnPhong();
@@ -52,7 +53,16 @@ bool Parser::load(string& file) {
 		rayTracer->scene.materials.push_back(mat);
 	}
 
-	// Material 2 - Water
+	// Material 2 - Air
+	{
+		Material* mat = new Material();
+		mat->kd = Color(1, 1, 1);
+		mat->refraction = 1;
+		mat->type = 3;
+		rayTracer->scene.materials.push_back(mat);
+	}
+
+	// Material 3 - Water
 	{
 		Material* mat = new Material();
 		mat->kd = Color(1, 0.5, 1);
@@ -61,21 +71,11 @@ bool Parser::load(string& file) {
 		rayTracer->scene.materials.push_back(mat);
 	}
 
-	// Material 3 - Glass
+	// Material 4 - Glass
 	{
 		Material* mat = new Material();
 		mat->kd = Color(1, 1, 1);
 		mat->refraction = 1.5;
-		mat->type = 3;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-
-	// Material 4 - Air
-	{
-		Material* mat = new Material();
-		mat->kd = Color(1, 1, 1);
-		mat->refraction = 1 / 1.330;
 		mat->type = 3;
 		rayTracer->scene.materials.push_back(mat);
 	}
@@ -98,7 +98,7 @@ bool Parser::load(string& file) {
 
 	// Metal sphere
 	{
-		Point3 center(0, 0.5, -2);
+		Point3 center(0.1, 0.5, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.25);
 		sphere->material = rayTracer->scene.materials[1];
 		rayTracer->scene.hitables.push_back(sphere);
@@ -106,7 +106,7 @@ bool Parser::load(string& file) {
 
 	// Opaque sphere
 	{
-		Point3 center(0.4, 0.4, -2);
+		Point3 center(0.5, 0.4, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.15);
 		sphere->material = rayTracer->scene.materials[0];
 		rayTracer->scene.hitables.push_back(sphere);
@@ -114,25 +114,25 @@ bool Parser::load(string& file) {
 
 	// Water sphere
 	{
-		Point3 center(0.8, 0.5, -2);
+		Point3 center(0.9, 0.5, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.25);
-		sphere->material = rayTracer->scene.materials[2];
+		sphere->material = rayTracer->scene.materials[3];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
 	// Anti-water sphere
 	{
-		Point3 center(0.8, 0.525, -2);
+		Point3 center(0.9, 0.525, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.225);
-		sphere->material = rayTracer->scene.materials[4];
+		sphere->material = rayTracer->scene.materials[2];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
 	// Glass sphere
 	{
-		Point3 center(1.25, 0.4, -2);
+		Point3 center(1.3, 0.4, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.15);
-		sphere->material = rayTracer->scene.materials[3];
+		sphere->material = rayTracer->scene.materials[4];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
