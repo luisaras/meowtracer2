@@ -5,7 +5,7 @@
 
 class Material {
 public:
-	// 0 = phong, 1 = lambertian, 2 = metal, 3 = dielectric
+	// 0 = phong, 1 = lambertian, 2 = metal, 3 = dielectric, 4 = beer's law
 	int type = 0;
 
 	// Phong
@@ -24,5 +24,8 @@ public:
 
 	// Metal
 	float fuzz = 0;
+
+	// Beer's Law
+	Color absorb = Color(0, 0, 0);
 
 };

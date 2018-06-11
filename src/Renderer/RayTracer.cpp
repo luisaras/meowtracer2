@@ -61,10 +61,18 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 			Vec3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
 			Ray refractedRay(refractedRayOrig, refractedDir, mat->refraction);
 			refractionColor = getColor(refractedRay, x, y, depth - 1);
+			// Beer's Law
+			if (mat->type == 4 && false) {
+				RayHit rh = tree->hit(refractedRay);
+				float distance = Vec3::distance(ray.origin, rh.point);
+				Vec3 absorb = (-mat->absorb * distance).exp();
+				refractionColor = refractionColor * absorb;
+			}
 		}
 
 		outside ? reflectedRay.origin += bias : reflectedRay.origin -= bias;
 		Vec3 reflectionColor = getColor(reflectedRay, x, y, depth - 1);
+
 
 		return color * (reflectionColor * fr + refractionColor * (1 - fr));
 	} else {

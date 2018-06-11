@@ -32,6 +32,7 @@ struct Vec3 {
     //
      void setLength(float NewLength);
 
+
     //
     // Accessors
     //
@@ -39,6 +40,7 @@ struct Vec3 {
      float length2() const;
 
      bool valid() const;
+     Vec3 exp() const;
 
 #ifdef USE_D3D
      operator D3DXVECTOR3() const;
@@ -77,7 +79,6 @@ struct Vec3 {
      static Vec3 lerp(const Vec3 &Left, const Vec3 &Right, float s);
      static Vec3 max(const Vec3 &Left, const Vec3 &Right);
      static Vec3 min(const Vec3 &Left, const Vec3 &Right);
-     //static bool WithinRect(const Vec3 &Pt, const Rectangle3f &Rect);
      static Vec3 cartesian2Spherical(const Vec3 &Cartesian);
      static Vec3 spherical2Cartesian(const Vec3 &Spherical);
 };

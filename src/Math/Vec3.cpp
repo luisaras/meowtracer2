@@ -21,14 +21,14 @@ Vec3::Vec3(const Vec3 &V) {
     z = V.z;
 }
 
- Vec3& Vec3::operator = (const Vec3 &V) {
+Vec3& Vec3::operator = (const Vec3 &V) {
     x = V.x;
     y = V.y;
     z = V.z;
     return *this;
 }
 
- Vec3 Vec3::randomVector() {
+Vec3 Vec3::randomVector() {
     float x, y, z;
     x = float(rand()) / RAND_MAX * 2.0f - 1.0f;
     y = float(rand()) / RAND_MAX * 2.0f - 1.0f;
@@ -36,23 +36,27 @@ Vec3::Vec3(const Vec3 &V) {
     return Vec3(x, y, z);
 }
 
- Vec3 Vec3::randomNormal() {
+Vec3 Vec3::randomNormal() {
     return normalize(randomVector());
 }
 
- float Vec3::length() const {
+float Vec3::length() const {
     return sqrtf(x * x + y * y + z * z);
 }
 
- float Vec3::length2() const {
+float Vec3::length2() const {
     return x * x + y * y + z * z;
 }
 
- bool Vec3::valid() const {
+bool Vec3::valid() const {
     return ((x == x) && (y == y) && (z == z));
 }
 
- Vec3 Vec3::normalize(const Vec3 &V) {
+Vec3 Vec3::exp() const {
+    return Vec3(std::exp(x), std::exp(y), std::exp(z));
+}
+
+Vec3 Vec3::normalize(const Vec3 &V) {
     float Len = V.length();
     if(Len == 0.0f) {
         return V;
@@ -62,7 +66,7 @@ Vec3::Vec3(const Vec3 &V) {
     }
 }
 
- void Vec3::setLength(float NewLength) {
+void Vec3::setLength(float NewLength) {
     float Len = length();
     if(Len != 0.0f) {
         float Factor = NewLength / Len;
@@ -72,14 +76,7 @@ Vec3::Vec3(const Vec3 &V) {
     }
 }
 
-#ifdef USE_D3D
- Vec3::operator D3DXVECTOR3() const {
-    D3DXVECTOR3 V(x, y, z);
-    return V;
-}
-#endif
-
- Vec3 Vec3::cross(const Vec3 &Left, const Vec3 &Right) {
+Vec3 Vec3::cross(const Vec3 &Left, const Vec3 &Right) {
     Vec3 Result;
     Result.x = Left.y * Right.z - Left.z * Right.y;
     Result.y = Left.z * Right.x - Left.x * Right.z;
@@ -87,15 +84,15 @@ Vec3::Vec3(const Vec3 &V) {
     return Result;
 }
 
- float Vec3::dot(const Vec3 &Left, const Vec3 &Right) {
+float Vec3::dot(const Vec3 &Left, const Vec3 &Right) {
     return (Left.x * Right.x + Left.y * Right.y + Left.z * Right.z);
 }
 
- Vec3 Vec3::lerp(const Vec3 &Left, const Vec3 &Right, float s) {
+Vec3 Vec3::lerp(const Vec3 &Left, const Vec3 &Right, float s) {
     return (Left + s * (Right - Left));
 }
 
- Vec3 Vec3::max(const Vec3 &Left, const Vec3 &Right) {
+Vec3 Vec3::max(const Vec3 &Left, const Vec3 &Right) {
     Vec3 Result = Right;
     if(Left.x > Right.x) Result.x = Left.x;
     if(Left.y > Right.y) Result.y = Left.y;
@@ -103,7 +100,7 @@ Vec3::Vec3(const Vec3 &V) {
     return Result;
 }
 
- Vec3 Vec3::min(const Vec3 &Left, const Vec3 &Right) {
+Vec3 Vec3::min(const Vec3 &Left, const Vec3 &Right) {
     Vec3 Result = Right;
     if(Left.x < Right.x) Result.x = Left.x;
     if(Left.y < Right.y) Result.y = Left.y;
@@ -111,7 +108,7 @@ Vec3::Vec3(const Vec3 &V) {
     return Result;
 }
 
- Vec3 Vec3::cartesian2Spherical(const Vec3 &Cartesian) {
+Vec3 Vec3::cartesian2Spherical(const Vec3 &Cartesian) {
     Vec3 Result;
     Result.x = Cartesian.length();
     Result.y = atan2f(Cartesian.y, Cartesian.x);
@@ -123,56 +120,50 @@ Vec3::Vec3(const Vec3 &V) {
     return Result;
 }
 
- Vec3 Vec3::spherical2Cartesian(const Vec3 &Spherical) {
+Vec3 Vec3::spherical2Cartesian(const Vec3 &Spherical) {
     const float &r = Spherical.x;
     const float &Theta = Spherical.y;
     const float &Phi = Spherical.z;
     float RSinPhi = r * sinf(Phi);
     return Vec3(cosf(Theta) * RSinPhi, sinf(Theta) * RSinPhi, r * cosf(Phi));
 }
-/*
- bool Vec3::WithinRect(const Vec3 &Pt, const Rectangle3f &Rect) {
-    return((Pt.x >= Rect.Min.x && Pt.x <= Rect.Max.x) &&
-           (Pt.y >= Rect.Min.y && Pt.y <= Rect.Max.y) &&
-           (Pt.z >= Rect.Min.z && Pt.z <= Rect.Max.z));
-}*/
 
- Vec3& Vec3::operator *= (float Right) {
+Vec3& Vec3::operator *= (float Right) {
     x *= Right;
     y *= Right;
     z *= Right;
     return *this;
 }
 
- Vec3& Vec3::operator /= (float Right) {
+Vec3& Vec3::operator /= (float Right) {
     x /= Right;
     y /= Right;
     z /= Right;
     return *this;
 }
 
- Vec3& Vec3::operator *= (int Right) {
+Vec3& Vec3::operator *= (int Right) {
     x *= Right;
     y *= Right;
     z *= Right;
     return *this;
 }
 
- Vec3& Vec3::operator /= (int Right) {
+Vec3& Vec3::operator /= (int Right) {
     x /= Right;
     y /= Right;
     z /= Right;
     return *this;
 }
 
- Vec3& Vec3::operator += (const Vec3 &Right) {
+Vec3& Vec3::operator += (const Vec3 &Right) {
     x += Right.x;
     y += Right.y;
     z += Right.z;
     return *this;
 }
 
- Vec3& Vec3::operator -= (const Vec3 &Right) {
+Vec3& Vec3::operator -= (const Vec3 &Right) {
     x -= Right.x;
     y -= Right.y;
     z -= Right.z;
@@ -185,48 +176,48 @@ Vec3 operator* (const Vec3 &Left, const Vec3 &Right) {
                 Right.z * Left.z);
 }
 
- Vec3 operator* (const Vec3 &Left, float Right) {
+Vec3 operator* (const Vec3 &Left, float Right) {
     return Vec3(Left.x * Right,
                 Left.y * Right,
                 Left.z * Right);
 }
 
- Vec3 operator* (float Left, const Vec3 &Right) {
+Vec3 operator* (float Left, const Vec3 &Right) {
     return Vec3(Right.x * Left,
                 Right.y * Left,
                 Right.z * Left);
 }
 
- Vec3 operator / (const Vec3 &Left, float Right) {
+Vec3 operator / (const Vec3 &Left, float Right) {
     return Vec3(Left.x / Right,
                 Left.y / Right,
                 Left.z / Right);
 }
 
- Vec3 operator + (const Vec3 &Left, const Vec3 &Right) {
+Vec3 operator + (const Vec3 &Left, const Vec3 &Right) {
     return Vec3(Left.x + Right.x,
                 Left.y + Right.y,
                 Left.z + Right.z);
 }
 
- Vec3 operator - (const Vec3 &Left, const Vec3 &Right) {
+Vec3 operator - (const Vec3 &Left, const Vec3 &Right) {
     return Vec3(Left.x - Right.x,
                 Left.y - Right.y,
                 Left.z - Right.z);
 }
 
- Vec3 operator - (const Vec3 &V) {
+Vec3 operator - (const Vec3 &V) {
     return Vec3(-V.x, -V.y, -V.z);
 }
 
- float Vec3::distance(const Vec3 &Left, const Vec3 &Right) {
+float Vec3::distance(const Vec3 &Left, const Vec3 &Right) {
     const float XDiff = Right.x - Left.x;
     const float YDiff = Right.y - Left.y;
     const float ZDiff = Right.z - Left.z;
     return sqrtf(XDiff * XDiff + YDiff * YDiff + ZDiff * ZDiff);
 }
 
- float Vec3::distance2(const Vec3 &Left, const Vec3 &Right) {
+float Vec3::distance2(const Vec3 &Left, const Vec3 &Right) {
     const float XDiff = Right.x - Left.x;
     const float YDiff = Right.y - Left.y;
     const float ZDiff = Right.z - Left.z;

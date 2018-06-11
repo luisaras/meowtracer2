@@ -9,16 +9,17 @@
 #include <random>
 
 bool Parser::load(string& file) {
-	colCount = rowCount = 1000;
+	colCount = 800;
+	rowCount = 400;
 
 	Matrix4 xform = Matrix4::identity();
 
 	// Camera
 	Vec3 h(1, 0, 0);
-	Vec3 v(0, 1, 0);
-	Point3 pos(0, 0, 0);
+	Vec3 v(0, 0.5, 0);
+	Point3 pos(0, 0.25, 0);
 	Vec3 lens(0.5, 0.5, 1);
-	float initRef = 1;
+	float initRef = 1.00029;
 	Camera* cam = new PerspectiveCamera(xform, h, v, pos, lens, initRef);
 
 	// Renderer
@@ -57,7 +58,7 @@ bool Parser::load(string& file) {
 	{
 		Material* mat = new Material();
 		mat->kd = Color(1, 1, 1);
-		mat->refraction = 1;
+		mat->refraction = initRef;
 		mat->type = 3;
 		rayTracer->scene.materials.push_back(mat);
 	}
@@ -77,6 +78,16 @@ bool Parser::load(string& file) {
 		mat->kd = Color(1, 1, 1);
 		mat->refraction = 1.5;
 		mat->type = 3;
+		rayTracer->scene.materials.push_back(mat);
+	}
+
+	// Material 5 - Jelly
+	{
+		Material* mat = new Material();
+		mat->kd = Color(1, 1, 1);
+		mat->refraction = 1.125;
+		mat->type = 4;
+		mat->absorb = Color(7.0, 7.0, 0.0);
 		rayTracer->scene.materials.push_back(mat);
 	}
 
@@ -133,6 +144,14 @@ bool Parser::load(string& file) {
 		Point3 center(1.3, 0.4, -2);
 		Sphere* sphere = new Sphere(xform, center, 0.15);
 		sphere->material = rayTracer->scene.materials[4];
+		rayTracer->scene.hitables.push_back(sphere);
+	}
+
+	// Jelly sphere
+	{
+		Point3 center(-0.3, 0.4, -2);
+		Sphere* sphere = new Sphere(xform, center, 0.15);
+		sphere->material = rayTracer->scene.materials[5];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
