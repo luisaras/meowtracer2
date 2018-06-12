@@ -82,6 +82,8 @@ Material* parseMaterial(Value& mat_js) {
 		m->shininess = mat_obj["SHINE"].getReal();
 	if (mat_obj.count("ROUGH"))
 		m->roughness = mat_obj["ROUGH"].getReal();
+	if (mat_obj.count("FUZZ"))
+		m->fuzz = mat_obj["FUZZ"].getReal();
 	if (mat_obj.count("REFLECT"))
 		m->reflectivity = mat_obj["REFLECT"].getReal();
 	if (mat_obj.count("REFRACTION"))

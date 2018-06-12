@@ -1,7 +1,7 @@
 #include "ParserUtil.h"
 
 Vec3 parseVec3(Value &vec_js) {
-  json_spirit::Array arr = vec_js.getArray();
+  Array arr = vec_js.getArray();
   float x = arr[0].getReal();
   float y = arr[1].getReal();
   float z = arr[2].getReal();
@@ -25,7 +25,7 @@ Matrix4 parseTransform(json_spirit::Value &xform_js) {
 		} 
 		if (xform_obj.count("ROTATION")) {
 			Vec3 v = parseVec3(xform_obj["ROTATION"]);
-			Matrix4 t = Matrix4::rotation(v.x * PI/180, v.y * PI/180, v.z * PI/180);
+			Matrix4 t = Matrix4::rotation(v.x * DEG2RAD, v.y * DEG2RAD, v.z * DEG2RAD);
 			transform = transform * t;
 		} 
 		if (xform_obj.count("TRANSLATION")) {

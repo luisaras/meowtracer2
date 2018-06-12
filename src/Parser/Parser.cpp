@@ -55,6 +55,7 @@ RayTracer* parseRenderer(Value& renderer_js, Value& bg_js, Camera* cam) {
 	if (renderer_obj.count("TREEDEPTH")) rt->treeDepth = renderer_obj["TREEDEPTH"].getInt();
 	if (renderer_obj.count("RAYDEPTH")) rt->rayDepth = renderer_obj["RAYDEPTH"].getInt();
 	if (renderer_obj.count("SAMPLES")) rt->sampleCount = renderer_obj["SAMPLES"].getInt();
+	if (renderer_obj.count("THREADS")) rt->threadCount = renderer_obj["THREADS"].getInt();
 	return rt;
 }
 
@@ -67,7 +68,7 @@ bool Parser::parse(string& content) {
 	Camera* camera = parseCamera(input_obj["CAMERA"]);
 	if (!camera) return false;
 	RayTracer* rayTracer = parseRenderer(input_obj["RENDERER"], input_obj["BACKGROUND"], camera);
-	renderer = rayTracer;	
+	renderer = rayTracer;
 	return parseScene(input_obj, rayTracer->scene);
 }
 

@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#define ERR 0.000001
+#define ERR 0.00001
 
 Triangle::Triangle(Vec3& p0, Vec3& p1, Vec3& p2) {
 	culling = false;

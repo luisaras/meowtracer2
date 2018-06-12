@@ -1,4 +1,5 @@
 #include "BlinnPhong.h"
+#define ERR 0.00001
 
 Color BlinnPhong::getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh) {
 	Color texture = rh.hitable->getTexture(rh.uv);
@@ -15,7 +16,7 @@ Color BlinnPhong::getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh) {
 
 Color BlinnPhong::diffuseColor (Light* light, LightHit &lh) {
 	float r = Vec3::dot(lh.direction, lh.rayHit.normal);
-	if (r > 0) {
+	if (r > ERR) {
 		Color &diff = lh.rayHit.hitable->material->kd;
 		return (diff * lh.color) * fmin(1.0, r);
 	}
@@ -26,7 +27,7 @@ Color BlinnPhong::specularColor(Light* light, LightHit &lh) {
 	Vec3 half = lh.direction - lh.ray.direction;
 	half = Vec3::normalize(half);
 	float r = Vec3::dot(half, lh.rayHit.normal);
-	if (r > 0) {
+	if (r > ERR) {
 		float s = lh.rayHit.hitable->material->shininess;
 		Color &spec = lh.rayHit.hitable->material->ks;
 		return (spec * lh.color) * fmin(1.0, pow(r, s));

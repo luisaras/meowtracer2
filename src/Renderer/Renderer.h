@@ -28,6 +28,7 @@ public:
 	Camera* camera;
 	Color tl, tr, bl, br;
 	int sampleCount = 1;
+	int threadCount = 4;
 	
 	virtual void preprocess() = 0;
 	Color* render(int width, int height);

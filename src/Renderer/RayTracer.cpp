@@ -31,7 +31,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 				color = color * (1 - mat->reflectivity) + 
 					getColor(reflectedRay, x, y, depth - 1) * mat->reflectivity;
 			}
-			return mat->ke + color;
+			return color += mat->ke;
 		}
 
 		Vec3 bias = ERR * rh.normal;

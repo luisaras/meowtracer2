@@ -1,7 +1,11 @@
 #include "Util.h"
 
-float clamp(float min, float max, float x) {
+float clamp(float x, float min, float max) {
 	return fmin(max, fmax(min, x));
+}
+
+Color clampColor(Color& color) {
+	return Color(clamp(color.x, 0, 1), clamp(color.y, 0, 1), clamp(color.z, 0, 1));
 }
 
 Vec2 randomVec2() {

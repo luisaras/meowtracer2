@@ -2,8 +2,6 @@
 #include <iostream>
 #include <cmath>
 
-#define NTHREAD 4
-
 using std::cout;
 using std::endl;
 using std::flush;
@@ -13,7 +11,7 @@ Color* Renderer::render(int width, int height) {
 	Color* colors = new Color[width * height];
 	progress = progressi = 0;
 	totalProgress = width * height;
-	if (NTHREAD == 1) {
+	if (threadCount == 1) {
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
 				renderCell(colors, i, j, width, height);
@@ -21,16 +19,16 @@ Color* Renderer::render(int width, int height) {
 			}
 		}
 	} else {
-		thread threads[NTHREAD - 1];
+		thread threads[threadCount - 1];
 		lineProgress = new bool[height];
 		for (int i = 0; i < height; i++) {
 			lineProgress[i] = false;
 		}
-		for (int i = 0; i < NTHREAD - 1; i++) {
+		for (int i = 0; i < threadCount - 1; i++) {
 			threads[i] = thread(&Renderer::threadRender, this, colors, width, height);
 		}
 		threadRender(colors, width, height);
-		for (int i = 0; i < NTHREAD - 1; i++) {
+		for (int i = 0; i < threadCount - 1; i++) {
 			threads[i].join();
 		}
 		delete [] lineProgress;
