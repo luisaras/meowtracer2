@@ -3,10 +3,14 @@
 
 #include "../Math/Vec3.h"
 
+enum MaterialType {
+	BLINNPHONG, COOKTORRANCE, LAMBERTIAN, METAL, DIELECTRIC, BEERS
+};
+
 class Material {
 public:
-	// 0 = phong, 1 = lambertian, 2 = metal, 3 = dielectric, 4 = beer's law
-	int type = 0;
+	Material(MaterialType t) : type(t) {}
+	MaterialType type;
 
 	// Phong
 	Color ka = Color(1, 1, 1);
@@ -14,7 +18,7 @@ public:
 	Color kd = Color(1, 1, 1);
 	Color ks = Color(1, 1, 1);
 	float shininess = 32;
-	float reflexivity = 0;
+	float reflectivity = 0;
 
 	// Cook-Torrance
 	float roughness = 0.1;

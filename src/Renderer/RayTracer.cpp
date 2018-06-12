@@ -17,14 +17,14 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (rh.hitable) {
 		Material* mat = rh.hitable->material;
 		// Phong
-		if (mat->type == 0) {
+		if (mat->type == BLINNPHONG) {
 			Color color = reflectionModel->getColor(tree, scene, ray, rh);
-			if (mat->reflexivity > 0) {
+			if (mat->reflectivity > 0) {
 				Vec3 bias = E * rh.normal;
 				Vec3 reflected = reflect(ray.direction, rh.normal);
 				Ray reflectedRay(rh.point + bias, reflected, ray.refraction);
-				color = color * (1 - mat->reflexivity) + 
-					getColor(reflectedRay, x, y, depth - 1) * mat->reflexivity;
+				color = color * (1 - mat->reflectivity) + 
+					getColor(reflectedRay, x, y, depth - 1) * mat->reflectivity;
 			}
 			return mat->ke + color;
 		}
@@ -33,7 +33,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		Color color = rh.hitable->getTexture(rh.uv) * mat->kd;
 
 		// Lambertian
-		if (mat->type == 1) {
+		if (mat->type == LAMBERTIAN) {
 			Vec3 direction = randomUnitVec3() + rh.normal;
 			Ray scattered(rh.point + bias, direction, ray.refraction);
 			return mat->ke + color * getColor(scattered, x, y, depth - 1);
@@ -44,7 +44,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		Ray reflectedRay(rh.point, reflectionDir, ray.refraction);
 
 		// Metal
-		if (mat->type == 2) {
+		if (mat->type == METAL) {
 			reflectedRay.direction += randomUnitVec3(mat->fuzz);
 			reflectedRay.origin += bias;
 			return color * getColor(reflectedRay, x, y, depth - 1);
@@ -53,26 +53,29 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		// Dielectric
 		float refr = mat->refraction / ray.refraction;
 		float fr = fresnel(ray.direction, rh.normal, refr);
+		fr = mat->reflectivity + ( 1.0 - mat->reflectivity) * fr;
 		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
+
 		Vec3 refractionColor(0, 0, 0);
-		if (fr < 1) {
+		if (fr < 1 - E) {
 			Vec3 refractedDir = refract(ray.direction, rh.normal, refr);
 			refractedDir = Vec3::normalize(refractedDir);
 			Vec3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
 			Ray refractedRay(refractedRayOrig, refractedDir, mat->refraction);
 			refractionColor = getColor(refractedRay, x, y, depth - 1);
 			// Beer's Law
-			if (mat->type == 4 && false) {
-				RayHit rh = tree->hit(refractedRay);
+			if (mat->type == BEERS && !outside) {
+				//RayHit rh = tree->hit(refractedRay);
 				float distance = Vec3::distance(ray.origin, rh.point);
 				Vec3 absorb = (-mat->absorb * distance).exp();
-				refractionColor = refractionColor * absorb;
+				color = color * absorb;
 			}
 		}
-
-		outside ? reflectedRay.origin += bias : reflectedRay.origin -= bias;
-		Vec3 reflectionColor = getColor(reflectedRay, x, y, depth - 1);
-
+		Vec3 reflectionColor(0, 0, 0);
+		if (fr > E) {
+			outside ? reflectedRay.origin += bias : reflectedRay.origin -= bias;
+			reflectionColor = getColor(reflectedRay, x, y, depth - 1);
+		}
 
 		return color * (reflectionColor * fr + refractionColor * (1 - fr));
 	} else {
