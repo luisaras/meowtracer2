@@ -4,7 +4,6 @@
 #include <vector>
 #include "Renderer.h"
 #include "Scene.h"
-#include "../Reflection/ReflectionModel.h"
 #include "../Tree/CubeTree.h"
 
 using std::vector;
@@ -15,7 +14,6 @@ protected:
 	
 public:
 	Scene scene;
-	ReflectionModel* reflectionModel;
 	CubeTree* tree;
 
 	// Parameters
@@ -23,7 +21,7 @@ public:
 	int treeSize = INT_MAX;
 	int rayDepth = 1;
 
-	RayTracer(Camera* cam, ReflectionModel* rm) : reflectionModel(rm) { camera = cam; }
+	RayTracer(Camera* cam) { camera = cam; }
 	~RayTracer();
 
 	// Renderer

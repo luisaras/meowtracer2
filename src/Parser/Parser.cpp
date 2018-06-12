@@ -1,191 +1,97 @@
 #include "Parser.h"
 #include "../Renderer/RayTracer.h"
-#include "../Reflection/BlinnPhong.h"
-#include "../Reflection/CookTorrance.h"
 #include "../Camera/PerspectiveCamera.h"
-#include "../Hitable/Sphere.h"
-#include "../Hitable/Triangle.h"
-#include "../Light/PointLight.h"
+#include "../Camera/OrthogonalCamera.h"
+#include "SceneParser.h"
 
-#include <random>
+#include <iostream>
+#include <fstream>
 
-void addCube(Scene& scene, Point3& center, Vec3& size, int mat) {
-	vector<Point3> v;
-	Vec3 half = size * 0.5;
-	Point3 min = center - half;
-	Point3 max = center + half;
-	Box cube(min, max);
-	cube.triangulate(v);
-	for (uint i = 0; i < v.size(); i += 3) {
-		Triangle* t = new Triangle(v[i], v[i + 1], v[i + 2]);
-		t->norm[0] = t->norm[1] = t->norm[2] = t->calculateNormal();
-		t->material = scene.materials[mat];
-		scene.hitables.push_back(t);
+using std::ifstream;
+
+Camera* parseCamera(Value& cam_js) {
+	Object cam_obj = cam_js.getObject();
+	// Field of view
+	float w = cam_obj["WIDTH"].getReal();
+	float h = cam_obj["HEIGHT"].getReal();
+	Vec3 hor(w, 0, 0);
+	Vec3 ver(0, h, 0);
+	// Position
+	Point3 center = parseVec3(cam_obj["CENTER"]);
+	Point3 corner = center - Vec3(w / 2, h / 2, 0);
+	// Transform
+	Matrix4 xform = cam_obj.count("TRANSFORM") ? 
+		parseTransform(cam_obj["TRANSFORM"]) : 
+		Matrix4::identity();
+	// Refraction index
+	float ref = cam_obj.count("REFRACTION") ? cam_obj["REFRACTION"].getReal() : 1;
+	// Camera type
+	string type = cam_obj["TYPE"].getString();
+	if (type == "perspective") {
+		// Perspective camera
+		Point3 viewer = parseVec3(cam_obj["VIEWER"]);
+		Point3 lens = center + viewer;
+		return new PerspectiveCamera(xform, hor, ver, corner, lens, ref);
+	} else if (type == "parallel") {
+		// Orthogonal camera
+		Vec3 dir = cam_obj.count("DIRECTION") ? parseVec3(cam_obj["DIRECTION"]) : Vec3(0, 0, -1);
+		return new OrthogonalCamera(xform, hor, ver, corner, dir, ref);
+	} else {
+		cout << "Camera type not recognized: " << type << endl;
+		return NULL;
 	}
 }
 
-void addSphere(Scene& scene, Point3& center, float radius, int mat) {
-	Matrix4 xform = Matrix4::identity();
-	Sphere* sphere = new Sphere(xform, center, radius);
-	sphere->material = scene.materials[mat];
-	scene.hitables.push_back(sphere);
+RayTracer* parseRenderer(Value& renderer_js, Value& bg_js, Camera* cam) {
+	Object renderer_obj = renderer_js.getObject();
+	Object bg_obj = bg_js.getObject();
+	RayTracer* rt = new RayTracer(cam);
+	// Background
+	rt->tl = bg_obj.count("UPPER_LEFT") ? parseVec3(bg_obj["UPPER_LEFT"]) : Vec3(1, 1, 1);
+	rt->tr = bg_obj.count("UPPER_RIGHT") ? parseVec3(bg_obj["UPPER_RIGHT"]) : Vec3(1, 1, 1);
+	rt->bl = bg_obj.count("LOWER_LEFT") ? parseVec3(bg_obj["LOWER_LEFT"]) : Vec3(1, 1, 1);
+	rt->br = bg_obj.count("LOWER_RIGHT") ? parseVec3(bg_obj["LOWER_RIGHT"]) : Vec3(1, 1, 1);
+	// Renderer parameters
+	if (renderer_obj.count("TREEDEPTH")) rt->treeDepth = renderer_obj["TREEDEPTH"].getInt();
+	if (renderer_obj.count("RAYDEPTH")) rt->rayDepth = renderer_obj["RAYDEPTH"].getInt();
+	if (renderer_obj.count("SAMPLES")) rt->sampleCount = renderer_obj["SAMPLES"].getInt();
+	return rt;
 }
 
-bool Parser::load(string& file) {
-	colCount = 800;
-	rowCount = 400;
+bool Parser::parse(string& content) {
+	Value input_js;
+	read(content, input_js);
+	Object input_obj = input_js.getObject();
+	colCount = input_obj["WIDTH"].getInt();
+	rowCount = input_obj["HEIGHT"].getInt();
+	Camera* camera = parseCamera(input_obj["CAMERA"]);
+	if (!camera) return false;
+	RayTracer* rayTracer = parseRenderer(input_obj["RENDERER"], input_obj["BACKGROUND"], camera);
+	renderer = rayTracer;	
+	return parseScene(input_obj, rayTracer->scene);
+}
 
-	Matrix4 xform = Matrix4::identity();
-
-	// Camera
-	Vec3 h(1, 0, 0);
-	Vec3 v(0, 0.5, 0);
-	Point3 pos(0, 0.25, 0);
-	Vec3 lens(0.5, 0.5, 1);
-	float initRef = 1.00029;
-	Camera* cam = new PerspectiveCamera(xform, h, v, pos, lens, initRef);
-
-	// Renderer
-	ReflectionModel* rm = new BlinnPhong();
-	RayTracer* rayTracer = new RayTracer(cam, rm);
-	renderer = rayTracer;
-	renderer->tl = Color(1, 1, 1);
-	renderer->tr = Color(1, 1, 1);
-	renderer->bl = Color(0, 0, 1);
-	renderer->br = Color(0, 0, 1);
-
-	rayTracer->treeDepth = 10;
-	rayTracer->rayDepth = 10;
-	rayTracer->sampleCount = 8;
-
-	// Material 0 - Blinn-Phong
-	{
-		Material* mat = new Material(BLINNPHONG);
-		mat->kd = Color(0.8, 0.3, 0.8);
-		mat->ks = Color(1, 0.8, 0.8) * 0.8;
-		mat->shininess = 16;
-		mat->reflectivity = 0.2;
-		rayTracer->scene.materials.push_back(mat);
+bool Parser::load(string& fileName) {
+	ifstream file(fileName.c_str(), ifstream::in);
+	if (file.is_open()) {
+		string content;
+		while(!file.eof()) {
+			string input;
+			getline(file, input);
+			// Clear comments
+			uint c = input.find_first_of("//");
+			if (c != string::npos)
+				input = input.substr(0, c);
+			content += input;
+		}
+		if (parse(content)) {
+			renderer->preprocess();
+			return true;
+		} else {
+			cout << "Could not parse." << endl;
+		}
+	} else {
+		cout << "File does not exist." << endl;
 	}
-
-	// Material 1 - Mirror
-	{
-		Material* mat = new Material(METAL);
-		mat->kd = Color(0, 1, 1);
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Material 2 - Air
-	{
-		Material* mat = new Material(DIELECTRIC);
-		mat->kd = Color(1, 1, 1);
-		mat->refraction = initRef;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Material 3 - Water
-	{
-		Material* mat = new Material(DIELECTRIC);
-		mat->kd = Color(1, 0.5, 1);
-		mat->refraction = 1.330;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Material 4 - Glass
-	{
-		Material* mat = new Material(DIELECTRIC);
-		mat->kd = Color(1, 1, 1);
-		mat->refraction = 1.5;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Material 5 - Jelly
-	{
-		Material* mat = new Material(BEERS);
-		mat->kd = Color(1, 1, 1);
-		mat->refraction = 1.125;
-		mat->absorb = Color(8.0, 8.0, 3.0);
-		mat->reflectivity = 0.01;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Material 6 - Phong (wall)
-	{
-		Material* mat = new Material(BLINNPHONG);
-		mat->kd = Color(0.5, 0.5, 0.5);
-		mat->ks = Color(1, 0.8, 0.8) * 0.8;
-		mat->shininess = 8;
-		rayTracer->scene.materials.push_back(mat);
-	}
-
-	// Floor
-	{
-		Point3 center(0.5, -99.75, -3);
-		addSphere(rayTracer->scene, center, 100, 6);
-	}
-
-	// Wall
-	{
-		Point3 center(0.5, -0.5, -104);
-		//addSphere(rayTracer->scene, center, 100, 0);
-	}
-
-	// Metal sphere
-	{
-		Point3 center(0.1, 0.5, -2);
-		addSphere(rayTracer->scene, center, 0.25, 1);
-	}
-
-	// Opaque sphere
-	{
-		Point3 center(0.5, 0.4, -2);
-		addSphere(rayTracer->scene, center, 0.15, 0);
-	}
-
-	// Water sphere
-	{
-		Point3 center(0.9, 0.5, -2);
-		addSphere(rayTracer->scene, center, 0.25, 3);
-	}
-
-	// Anti-water sphere
-	{
-		Point3 center(0.9, 0.525, -2);
-		addSphere(rayTracer->scene, center, 0.225, 2);
-	}
-
-	// Glass sphere
-	{
-		Point3 center(1.3, 0.4, -2);
-		addSphere(rayTracer->scene, center, 0.15, 4);
-	}
-
-	// Jelly Cube
-	{
-		Point3 center(-0.5, 0.35, -2.8);
-		Vec3 size(0.2, 0.2, 0.2);
-		addCube(rayTracer->scene, center, size, 5);
-	}
-
-	std::default_random_engine generator (0);
-	for (int i = 0; i < 0; i++) {
-		Point3 center(1.5 * generator() / generator.max() - 0.25, 
-			1.5 * generator() / generator.max() - 0.25,
-			1.5 * generator() / generator.max() - 2.25);
-		Sphere* sphere = new Sphere(xform, center, 0.25 * generator() / generator.max());
-		sphere->material = rayTracer->scene.materials[0];
-		rayTracer->scene.hitables.push_back(sphere);
-	}
-
-	//Light
-	{
-		Color color(1, 1, 1);
-		Point3 origin(0.5, 1.25, -1);
-		PointLight* light = new PointLight(xform, color, origin, 1);
-		rayTracer->scene.lights.push_back(light);
-	}
-	rayTracer->scene.ambientColor = Color(0.05, 0.05, 0.1);
-
-	renderer->preprocess();
-	return true;
+	return false;
 }

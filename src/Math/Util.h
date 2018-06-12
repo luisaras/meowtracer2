@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Vec2.h"
@@ -12,7 +11,7 @@
 #define INF std::numeric_limits<float>::infinity()
 #define PI2 6.28318530718 
 #define PI 3.14159265359
-#define E 0.00001
+#define ERR 0.000001
 
 Vec2 randomVec2();
 Vec3 randomUnitVec3(float radius = 1);

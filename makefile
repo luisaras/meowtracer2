@@ -33,7 +33,7 @@ $(foreach i,$(MATH),$(eval $(call recipe,$(i),Math/)))
 MESH = Mesh
 $(foreach i,$(MESH),$(eval $(call recipe,$(i),Mesh/)))
 
-PARSER = Parser
+PARSER = Parser SceneParser HitableParser ParserUtil
 $(foreach i,$(PARSER),$(eval $(call recipe,$(i),Parser/)))
 
 REF = BlinnPhong CookTorrance

@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* JSON Spirit library for the parser: https://github.com/deweerdt/JSON-Spirit
+* JSON Spirit library for the parser: https://github.com/sirikata/json-spirit
 * pnglib for the images
 
 ## Run

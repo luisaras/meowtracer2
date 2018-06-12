@@ -1,4 +1,6 @@
 #include "RayTracer.h"
+#include "../Reflection/BlinnPhong.h"
+#include "../Reflection/CookTorrance.h"
 #include "../Math/Util.h"
 
 void RayTracer::preprocess() {
@@ -16,11 +18,14 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	RayHit rh = tree->hit(ray);
 	if (rh.hitable) {
 		Material* mat = rh.hitable->material;
+
 		// Phong
-		if (mat->type == BLINNPHONG) {
-			Color color = reflectionModel->getColor(tree, scene, ray, rh);
+		if (mat->type == BLINNPHONG || mat->type == COOKTORRANCE) {
+			Color color = mat->type == BLINNPHONG ?
+				BlinnPhong().getColor(tree, scene, ray, rh) :
+				CookTorrance().getColor(tree, scene, ray, rh);
 			if (mat->reflectivity > 0) {
-				Vec3 bias = E * rh.normal;
+				Vec3 bias = ERR * rh.normal;
 				Vec3 reflected = reflect(ray.direction, rh.normal);
 				Ray reflectedRay(rh.point + bias, reflected, ray.refraction);
 				color = color * (1 - mat->reflectivity) + 
@@ -29,7 +34,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 			return mat->ke + color;
 		}
 
-		Vec3 bias = E * rh.normal;
+		Vec3 bias = ERR * rh.normal;
 		Color color = rh.hitable->getTexture(rh.uv) * mat->kd;
 
 		// Lambertian
@@ -57,7 +62,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
 
 		Vec3 refractionColor(0, 0, 0);
-		if (fr < 1 - E) {
+		if (fr < 1 - ERR) {
 			Vec3 refractedDir = refract(ray.direction, rh.normal, refr);
 			refractedDir = Vec3::normalize(refractedDir);
 			Vec3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
@@ -72,7 +77,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 			}
 		}
 		Vec3 reflectionColor(0, 0, 0);
-		if (fr > E) {
+		if (fr > ERR) {
 			outside ? reflectedRay.origin += bias : reflectedRay.origin -= bias;
 			reflectionColor = getColor(reflectedRay, x, y, depth - 1);
 		}
@@ -86,5 +91,4 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 
 RayTracer::~RayTracer() {
 	delete tree;
-	delete reflectionModel;
 }

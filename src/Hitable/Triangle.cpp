@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#define E 0.000000001
+#define ERR 0.000001
 
 Triangle::Triangle(Vec3& p0, Vec3& p1, Vec3& p2) {
 	culling = false;
@@ -21,12 +21,12 @@ inline float min3(float a, float b, float c) {
 Box Triangle::hitBox() {
   Vec3 p1 = origin + e1;
   Vec3 p2 = origin + e2;
-  Vec3 min = Vec3(min3(origin.x, p1.x, p2.x) - E,
-  								min3(origin.y, p1.y, p2.y) - E,
-  								min3(origin.z, p1.z, p2.z) - E);
-  Vec3 max = Vec3(max3(origin.x, p1.x, p2.x) + E, 
-  								max3(origin.y, p1.y, p2.y) + E, 
-  								max3(origin.z, p1.z, p2.z) + E);
+  Vec3 min = Vec3(min3(origin.x, p1.x, p2.x) - ERR,
+  								min3(origin.y, p1.y, p2.y) - ERR,
+  								min3(origin.z, p1.z, p2.z) - ERR);
+  Vec3 max = Vec3(max3(origin.x, p1.x, p2.x) + ERR, 
+  								max3(origin.y, p1.y, p2.y) + ERR, 
+  								max3(origin.z, p1.z, p2.z) + ERR);
   return Box(min, max);
 }
 
@@ -40,7 +40,7 @@ RayHit Triangle::hit(Ray &ray) {
   float det = Vec3::dot(e1, e2vec);
   float u, v;
   if (culling) {
-    if (det < E)
+    if (det < ERR)
       return rh;
 
     Vec3 tvec = ray.origin - origin;
@@ -54,7 +54,7 @@ RayHit Triangle::hit(Ray &ray) {
 
     rh.t = Vec3::dot(e2, e1vec) / det;
   } else {
-    if (det > -E && det < E)
+    if (det > -ERR && det < ERR)
       return rh;
 
     float inv_det = 1.0 / det;
