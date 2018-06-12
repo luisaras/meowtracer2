@@ -4,9 +4,25 @@
 #include "../Reflection/CookTorrance.h"
 #include "../Camera/PerspectiveCamera.h"
 #include "../Hitable/Sphere.h"
+#include "../Hitable/Triangle.h"
 #include "../Light/PointLight.h"
 
 #include <random>
+
+void addCube(Scene& scene, Point3& center, Vec3& size, Material* mat) {
+	vector<Point3> v;
+	Vec3 half = size * 0.5;
+	Point3 min = center - half;
+	Point3 max = center + half;
+	Box cube(min, max);
+	cube.triangulate(v);
+	for (uint i = 0; i < v.size(); i += 3) {
+		Triangle* t = new Triangle(v[i], v[i + 1], v[i + 2]);
+		t->norm[0] = t->norm[1] = t->norm[2] = t->calculateNormal();
+		t->material = mat;
+		scene.hitables.push_back(t);
+	}
+}
 
 bool Parser::load(string& file) {
 	colCount = 800;
@@ -32,62 +48,73 @@ bool Parser::load(string& file) {
 	renderer->br = Color(0, 0, 1);
 
 	rayTracer->treeDepth = 10;
-	rayTracer->rayDepth = 20;
+	rayTracer->rayDepth = 10;
 	rayTracer->sampleCount = 8;
 
 	// Material 0 - Phong
 	{
 		Material* mat = new Material();
-		mat->kd = Color(0.8, 0.5, 0.8);
+		mat->type = 0;
+		mat->kd = Color(0.8, 0.3, 0.8);
 		mat->ks = Color(1, 0.8, 0.8) * 0.8;
 		mat->shininess = 16;
-		mat->reflexivity = 0.2;
-		mat->type = 0;
+		mat->reflectivity = 0.2;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Material 1 - Mirror
 	{
 		Material* mat = new Material();
-		mat->kd = Color(0, 1, 1);
 		mat->type = 2;
+		mat->kd = Color(0, 1, 1);
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Material 2 - Air
 	{
 		Material* mat = new Material();
+		mat->type = 3;
 		mat->kd = Color(1, 1, 1);
 		mat->refraction = initRef;
-		mat->type = 3;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Material 3 - Water
 	{
 		Material* mat = new Material();
+		mat->type = 3;
 		mat->kd = Color(1, 0.5, 1);
 		mat->refraction = 1.330;
-		mat->type = 3;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Material 4 - Glass
 	{
 		Material* mat = new Material();
+		mat->type = 3;
 		mat->kd = Color(1, 1, 1);
 		mat->refraction = 1.5;
-		mat->type = 3;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
 	// Material 5 - Jelly
 	{
 		Material* mat = new Material();
+		mat->type = 4;
 		mat->kd = Color(1, 1, 1);
 		mat->refraction = 1.125;
-		mat->type = 4;
-		mat->absorb = Color(7.0, 7.0, 0.0);
+		mat->absorb = Color(8.0, 8.0, 3.0);
+		mat->reflectivity = 0.01;
+		rayTracer->scene.materials.push_back(mat);
+	}
+
+	// Material 6 - Phong (wall)
+	{
+		Material* mat = new Material();
+		mat->type = 0;
+		mat->kd = Color(0.5, 0.5, 0.5);
+		mat->ks = Color(1, 0.8, 0.8) * 0.8;
+		mat->shininess = 8;
 		rayTracer->scene.materials.push_back(mat);
 	}
 
@@ -95,7 +122,7 @@ bool Parser::load(string& file) {
 	{
 		Point3 center(0.5, -99.75, -3);
 		Sphere* sphere = new Sphere(xform, center, 100);
-		sphere->material = rayTracer->scene.materials[0];
+		sphere->material = rayTracer->scene.materials[6];
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
@@ -147,12 +174,11 @@ bool Parser::load(string& file) {
 		rayTracer->scene.hitables.push_back(sphere);
 	}
 
-	// Jelly sphere
+	// Jelly Cube
 	{
-		Point3 center(-0.3, 0.4, -2);
-		Sphere* sphere = new Sphere(xform, center, 0.15);
-		sphere->material = rayTracer->scene.materials[5];
-		rayTracer->scene.hitables.push_back(sphere);
+		Point3 center(-0.5, 0.35, -2.8);
+		Vec3 size(0.2, 0.2, 0.2);
+		addCube(rayTracer->scene, center, size, rayTracer->scene.materials[0]);
 	}
 
 	std::default_random_engine generator (0);

@@ -1,8 +1,8 @@
 #include "Triangle.h"
-#define E 0.0000000000001
+#define E 0.000000001
 
 Triangle::Triangle(Vec3& p0, Vec3& p1, Vec3& p2) {
-	culling = true;
+	culling = false;
 	e1 = p1 - p0;
 	e2 = p2 - p0;
 	origin = p0;
@@ -21,8 +21,12 @@ inline float min3(float a, float b, float c) {
 Box Triangle::hitBox() {
   Vec3 p1 = origin + e1;
   Vec3 p2 = origin + e2;
-  Vec3 min = Vec3(min3(origin.x, p1.x, p2.x), min3(origin.y, p1.y, p2.y), min3(origin.z, p1.z, p2.z));
-  Vec3 max = Vec3(max3(origin.x, p1.x, p2.x), max3(origin.y, p1.y, p2.y), max3(origin.z, p1.z, p2.z));
+  Vec3 min = Vec3(min3(origin.x, p1.x, p2.x) - E,
+  								min3(origin.y, p1.y, p2.y) - E,
+  								min3(origin.z, p1.z, p2.z) - E);
+  Vec3 max = Vec3(max3(origin.x, p1.x, p2.x) + E, 
+  								max3(origin.y, p1.y, p2.y) + E, 
+  								max3(origin.z, p1.z, p2.z) + E);
   return Box(min, max);
 }
 
@@ -68,6 +72,8 @@ RayHit Triangle::hit(Ray &ray) {
   }
   rh.hitable = this;
   rh.uv = Vec2(u, v);
+  rh.normal = norm[0] * (1 - u - v) + norm[1] * u + norm[2] * v;
+  rh.point = ray.at(rh.t);
   return rh;
 }
 

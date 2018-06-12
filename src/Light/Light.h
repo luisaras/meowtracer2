@@ -11,6 +11,7 @@ struct LightHit {
   Ray& ray;
   Vec3 direction;
   Color color;
+  float distance;
   LightHit(Ray& r, RayHit& rh) : ray(r), rayHit(rh) {}
 };
 

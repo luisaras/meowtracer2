@@ -1,7 +1,9 @@
-
 #pragma once
 
 #include "../Math/Ray.h"
+#include <vector>
+
+using std::vector;
 
 class Box {
 public:
@@ -15,4 +17,5 @@ public:
 	bool hit(Vec3 other[2]);
 	Box cluster(Box& other);
 	float volume();
+	void triangulate(vector<Point3>& vertices);
 };

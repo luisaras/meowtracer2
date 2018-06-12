@@ -4,8 +4,8 @@
 LightHit SphereLight::hit(Ray& ray, RayHit& rh) {
 	LightHit lh(ray, rh);
 	Vec3 v = origin - rh.point;
-	lh.direction = v + randomUnitVec3(size);
-	lh.direction = Vec3::normalize(lh.direction);
-	lh.color = color;
+	Vec3 dir = v + randomUnitVec3(size);
+	lh.distance = dir.length();
+	lh.direction = Vec3::normalize(dir);
 	return lh;
 }
