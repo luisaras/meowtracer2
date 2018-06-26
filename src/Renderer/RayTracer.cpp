@@ -19,8 +19,9 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (rh.hitable) {
 		Material* mat = rh.hitable->material;
 
-		float distance = Vec3::distance2(ray.origin, rh.point);
-		Color absorbed = (-ray.absorb * 10 * distance).exp();
+		float distance = Vec3::distance(ray.origin, rh.point);
+		Color absorbed = distance > ERR * 100 ? (-ray.absorb * distance).exp() : Color(1, 1, 1);
+		absorbed = absorbed.clamp(0, 1);
 
 		// Phong & Cook-Torrance
 		if (mat->type == BLINNPHONG || mat->type == COOKTORRANCE) {
@@ -37,7 +38,8 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 			return absorbed * (mat->ke + color);
 		}
 
-		bool outside = Vec3::dot(ray.direction, rh.normal) < 0;
+		float cosi = Vec3::dot(ray.direction, rh.normal);
+		bool outside = cosi < 0;
 		Vec3 bias = 100 * ERR * rh.normal;
 		Point3 reflectedRayOrig = outside ? rh.point + bias : rh.point - bias;
 
@@ -62,23 +64,22 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		}
 
 		// Dielectric
-		float refr = mat->refraction / ray.refraction;
-		float cost = 0, cosi = clamp(Vec3::dot(ray.direction, rh.normal), -1, 1);
-		float etai = 1, etat = refr;
-		if (cosi < 0)
+		float cost = 0;
+		float refr1 = ray.refraction;
+		float refr2 = mat->refraction;
+		if (outside)
 			cosi = -cosi;
 		else
-			std::swap(etai, etat); 
-		float eta = etai / etat;
-		float sint = eta * std::max(0.f, 1 - cosi * cosi);
-		float k = 1 - eta * sint;
+			std::swap(refr1, refr2); 
+		float refr = refr1 / refr2;
+
+		float k = 1 - refr * refr * (1 - cosi * cosi);
 
 		float fr = 1;
 		if (k > 0) {
 			cost = sqrtf(k);
-			float acosi = fabsf(cosi);
-			float Rs = ((etat * acosi) - (etai * cost)) / ((etat * acosi) + (etai * cost));
-			float Rp = ((etai * acosi) - (etat * cost)) / ((etai * acosi) + (etat * cost));
+			float Rs = ((refr2 * cosi) - (refr1 * cost)) / ((refr2 * cosi) + (refr1 * cost));
+			float Rp = ((refr1 * cosi) - (refr2 * cost)) / ((refr1 * cosi) + (refr2 * cost));
 			fr = (Rs * Rs + Rp * Rp) / 2;
 		} // Else: total internal reflection
 		fr = mat->reflectivity + (1.0 - mat->reflectivity) * fr;
@@ -86,13 +87,11 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		Vec3 refractionColor(0, 0, 0);
 		if (fr < 1 - ERR) {
 			// Refraction ray
-			if (k > 0) {
-				Vec3 refractedDir = eta * ray.direction + (eta * cosi - cost) * rh.normal; 
-				Point3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
-				Vec3 absorb = ray.absorb + (outside ? mat->absorb : -mat->absorb);
-				Ray refractedRay(refractedRayOrig, refractedDir, mat->refraction, absorb);
-				refractionColor = getColor(refractedRay, x, y, depth - 1);
-			}
+			Vec3 refractedDir = refr * ray.direction + (refr * cosi - cost) * rh.normal;
+			Point3 refractedRayOrig = outside ? rh.point - bias : rh.point + bias;
+			Vec3 absorb = ray.absorb + (outside ? mat->absorb : -mat->absorb);
+			Ray refractedRay(refractedRayOrig, refractedDir, mat->refraction, absorb);
+			refractionColor = getColor(refractedRay, x, y, depth - 1);
 		}
 
 		Vec3 reflectionColor(0, 0, 0);

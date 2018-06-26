@@ -15,7 +15,7 @@
 	"RENDERER": {
 		"TREEDEPTH": 10,
 		"RAYDEPTH": 10,
-		"SAMPLES": 1,
+		"SAMPLES": 8,
 		"THREADS": 4
 	},
 
@@ -72,7 +72,7 @@
 			"TYPE": "beers",
 			"KD": [1, 1, 1],
 			"REFRACTION": 1.21,
-			"ABSORB": [8.0, 8.0, 3.0]
+			"ABSORB": [8, 8, 3]
 		},
 		{ // Material 6 - Phong (wall)
 			"TYPE": "blinn-phong",
@@ -137,8 +137,8 @@
 		},
 		{ // 7 - Anti-glass sphere
 			"TYPE": "sphere",
-			"CENTER": [1.05, 0.25, -2],
-			"RADIUS": 0.2, 
+			"CENTER": [1.05, 0.27, -2],
+			"RADIUS": 0.225,
 			"MATERIAL": 2
 		},
 		{ // 8 - Water sphere
@@ -152,11 +152,9 @@
 			"CENTER": [-0.25, 0.1, -1],
 			"RADIUS": 0.1,
 			"MATERIAL": 5,
-			"TRANSFORM": [
-				{
-					//"SCALE": [1.2, 0.5, 1.2]
-				}
-			]
+			"TRANSFORM": [{
+				"SCALE": [1.2, 0.5, 1.2]
+			}]
 		},
 		{ // 10 - Jelly cube
 			"TYPE": "cube",

@@ -7,7 +7,7 @@ Sphere::Sphere(int id, Matrix4 &xform, Point3 p, float rad) : center(p), radius(
 	Matrix4 translation = Matrix4::translation(center);
 	Matrix4 scaling = Matrix4::scaling(radius);
 	transform = scaling * translation;
-	transform = transform * xform;
+	transform = xform * transform;
 	invt = transform.inverse();
 }
 
@@ -52,41 +52,25 @@ RayHit Sphere::hit(Ray &ray) {
 		float sqrtdelta = std::sqrt(delta);
 		float t1 = (-b - sqrtdelta) / (2 * a);
 		float t2 = (-b + sqrtdelta) / (2 * a);
-		if (t1 < 0)
-			rh.t = t2;
-		else if (t2 < 0)
-			rh.t = t1;
-		else
-			rh.t = std::min(t1, t2);
+		float t = t1 < 0 ? t2 : t2 < 0 ? t1 : std::min(t1, t2);
 
-		if (rh.t < 0)
+		if (t < 0)
 			return rh;
 
-		rh.point = ray.at(rh.t);
-		rh.normal = o + rh.t * d;
+		rh.t = t;
+		rh.point = ray.at(t);
+		
+		{ // UV map
+			Vec3 n = o + rh.t * d;
+			float phi = atan2(n.z, n.x);
+	    	float theta = asin(n.y);
+		    float u = 1 - (phi + PI) / (2 * PI);
+		    float v = (theta + PI / 2) / PI;
+		    rh.uv = Vec2(u, v);
+		}
 
-		float x = rh.normal.x, y = rh.normal.y, z = rh.normal.z;
-		//float tetha = acos(z);
-		//float phi = atan(y / x);
-		//rh.texture = material->texture(tetha / (2 * PI), phi / (2 * PI), rh.normal);
-		//std::cout << x << " " << y << " " << z << " " << tetha / PI * 180 << " " << phi / PI * 180 << std::endl;
-
-		float phi = atan2(z, x);
-    	float theta = asin(y);
-	    float u = 1-(phi + PI) / (2*PI);
-	    float v = (theta + PI/2) / PI;
-	    rh.uv = Vec2(u, v);
-
-		//float u = x / 2 + 0.5;
-		//float v = y / 2 + 0.5;
-		//rh.texture = material->texture(u, v, rh.normal);
-
-		rh.normal = transform.transformVector(rh.normal);
+		rh.normal = rh.point - center;
 		rh.normal = Vec3::normalize(rh.normal);
-
-		//if (Vec3::dot(ray.direction, rh.normal) > 0)
-			//std::cout << "bla" << std::endl;
-
 		rh.hitable = this;
 	}
 

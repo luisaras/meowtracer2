@@ -40,7 +40,10 @@ struct Vec3 {
      float length2() const;
 
      bool valid() const;
+     bool inf() const;
+
      Vec3 exp() const;
+     Vec3 clamp(float min, float max) const;
 
 #ifdef USE_D3D
      operator D3DXVECTOR3() const;

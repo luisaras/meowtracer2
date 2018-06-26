@@ -52,8 +52,19 @@ bool Vec3::valid() const {
     return ((x == x) && (y == y) && (z == z));
 }
 
+bool Vec3::inf() const {
+    return isinf(x) || isinf(y) || isinf(z);
+}
+
 Vec3 Vec3::exp() const {
     return Vec3(std::exp(x), std::exp(y), std::exp(z));
+}
+
+Vec3 Vec3::clamp(float min, float max) const {
+    float _x = fmin(max, fmax(min, x));
+    float _y = fmin(max, fmax(min, y));
+    float _z = fmin(max, fmax(min, z));
+    return Vec3(_x, _y, _z);
 }
 
 Vec3 Vec3::normalize(const Vec3 &V) {
