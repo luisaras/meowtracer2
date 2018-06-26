@@ -1,7 +1,8 @@
 #include "Triangle.h"
 #define ERR 0.00001
 
-Triangle::Triangle(Vec3& p0, Vec3& p1, Vec3& p2) {
+Triangle::Triangle(int id, Vec3& p0, Vec3& p1, Vec3& p2) {
+  this->id = id;
 	culling = false;
 	e1 = p1 - p0;
 	e2 = p2 - p0;

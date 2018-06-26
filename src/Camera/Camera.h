@@ -10,6 +10,7 @@ protected:
 	Vec3 vertical;
 	Point3 position;
 	float refraction;
+	Color absorb = Color(0, 0, 0);
 
 	Camera(Matrix4 &xform, Vec3 &h, Vec3 &v, Point3 &pos, float ref = 1) : 
 	    horizontal(xform.transformVector(h)), 

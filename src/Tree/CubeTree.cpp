@@ -97,7 +97,7 @@ RayHit CubeTree::hit(Ray& ray) {
 }
 
 bool CubeTree::hitsLight(Light* light, LightHit& lh) {
-	Ray ray(lh.rayHit.point + lh.direction * ERR, lh.direction, 1);
+	Ray ray(lh.rayHit.point + lh.direction * ERR * 10, lh.direction, 1);
 	RayHit rh = hit(ray);
 	return !isnan(rh.t) && rh.t > ERR && rh.t <= lh.distance;
 }

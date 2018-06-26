@@ -15,7 +15,7 @@ public:
 
 	bool culling = true;
 
-	Triangle (Vec3& p0, Vec3& p1, Vec3& p2);
+	Triangle (int id, Vec3& p0, Vec3& p1, Vec3& p2);
 	
 	Vec3 calculateNormal();
 	bool isInside(Vec3& p);

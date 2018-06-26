@@ -11,6 +11,7 @@ struct RayHit;
 
 class Hitable {
 public:
+	int id;
 	Material* material;
 	Texture* texture;
 	virtual RayHit hit(Ray& ray) = 0;

@@ -3,6 +3,7 @@
 
 #include "../Hitable/Triangle.h"
 #include "../Material/Material.h"
+#include "../Material/Texture.h"
 #include "../Math/Vec2.h"
 #include "../Math/Vec3.h"
 #include "../Math/Matrix4.h"
@@ -54,6 +55,6 @@ public:
 
 	void clear();
 	void transform(Matrix4& xform);
-	void getTriangles(vector<Triangle>& v, Material* mat);
+	void getTriangles(vector<Triangle*>& v, Material* mat, Texture* tex);
 
 };

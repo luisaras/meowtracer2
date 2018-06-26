@@ -210,6 +210,10 @@ Vec3 operator - (const Vec3 &V) {
     return Vec3(-V.x, -V.y, -V.z);
 }
 
+Vec3 operator - (float x, const Vec3& V) {
+    return Vec3(x - V.x, x - V.y, x - V.z);
+}
+
 float Vec3::distance(const Vec3 &Left, const Vec3 &Right) {
     const float XDiff = Right.x - Left.x;
     const float YDiff = Right.y - Left.y;

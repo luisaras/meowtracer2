@@ -66,27 +66,28 @@ void Mesh::transform(Matrix4& xform) {
 	}
 }
 
-void Mesh::getTriangles(vector<Triangle>& v, Material* mat) {
+void Mesh::getTriangles(vector<Triangle*>& v, Material* mat, Texture* tex) {
 	Material* meshMat = mat == 0 ? material : mat;
 	for(uint i = 0; i < vertices.size(); i += 3) {
 		Vec3 v1 = getCoord(i);
 		Vec3 v2 = getCoord(i+1);
 		Vec3 v3 = getCoord(i+2);
-		Triangle t(v1, v2, v3);
+		Triangle* t = new Triangle(0, v1, v2, v3);
 		if (vertices[i].normal == 0) {
-			t.norm[0] = t.norm[1] = t.norm[2] = t.calculateNormal();
+			t->norm[0] = t->norm[1] = t->norm[2] = t->calculateNormal();
 		} else {
-			t.norm[0] = getNormal(i);
-			t.norm[1] = getNormal(i+1);
-			t.norm[2] = getNormal(i+2);
+			t->norm[0] = getNormal(i);
+			t->norm[1] = getNormal(i+1);
+			t->norm[2] = getNormal(i+2);
 		}
-		t.rad[0] = getColor(i);
-		t.rad[1] = getColor(i+1);
-		t.rad[2] = getColor(i+2);
-		t.tex[0] = getTexUV(i);
-		t.tex[1] = getTexUV(i+1);
-		t.tex[3] = getTexUV(i+2);
-		t.material = meshMat;
+		t->rad[0] = getColor(i);
+		t->rad[1] = getColor(i+1);
+		t->rad[2] = getColor(i+2);
+		t->tex[0] = getTexUV(i);
+		t->tex[1] = getTexUV(i+1);
+		t->tex[3] = getTexUV(i+2);
+		t->material = meshMat;
+		t->texture = tex;
 		v.push_back(t);
 	}
 }
@@ -96,7 +97,7 @@ bool Mesh::inTriangle(Vertex& v, Vertex& v1, Vertex& v2, Vertex& v3) {
 	Vec3& tri1 = getElement(coords, v1.coord, 1);
 	Vec3& tri2 = getElement(coords, v2.coord, 1);
 	Vec3& tri3 = getElement(coords, v3.coord, 1);
-	Triangle t(tri1, tri2, tri3);
+	Triangle t(0, tri1, tri2, tri3);
 	return t.isInside(point);
 }
 

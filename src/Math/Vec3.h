@@ -90,6 +90,7 @@ Vec3 operator / (const Vec3 &Left, float Right);
 Vec3 operator + (const Vec3 &Left, const Vec3 &Right);
 Vec3 operator - (const Vec3 &Left, const Vec3 &Right);
 Vec3 operator - (const Vec3 &V);
+Vec3 operator - (float x, const Vec3& V);
 ostream& operator <<(ostream& os, const Vec3& vec);
 
 #define Point3 Vec3

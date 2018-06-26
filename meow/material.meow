@@ -1,7 +1,7 @@
 {
 	// Image size
-	"WIDTH": 1500,
-	"HEIGHT": 750,
+	"WIDTH": 1000,
+	"HEIGHT": 600,
 
 	// Background color
 	"BACKGROUND": {
@@ -23,8 +23,8 @@
 	"CAMERA": {
 		"TYPE": "perspective",
 		"WIDTH": 1,
-		"HEIGHT": 0.5,
-		"CENTER": [0.5, 0.4, 0],
+		"HEIGHT": 0.6,
+		"CENTER": [0.5, 0.15, 0],
 		"VIEWER": [0, 0.05, 1],
 		"REFRACTION": 1.00029
 	},
@@ -60,20 +60,19 @@
 		},
 		{ // Material 3 - Water
 			"TYPE": "dielectric",
-			"KD": [1, 0.5, 1],
+			"KD": [1, 1, 1],
 			"REFRACTION": 1.330
 		},
 		{ // Material 4 - Glass
 			"TYPE": "dielectric",
-			"KD": [1, 1, 1],
+			"KD": [1, 0.5, 1],
 			"REFRACTION": 1.5
 		},
 		{ // Material 5 - Jelly
 			"TYPE": "beers",
 			"KD": [1, 1, 1],
-			"REFRACTION": 0.8,
-			"ABSORB": [8.0, 8.0, 3.0],
-			"REFLECT": 0.01
+			"REFRACTION": 1.21,
+			"ABSORB": [8.0, 8.0, 3.0]
 		},
 		{ // Material 6 - Phong (wall)
 			"TYPE": "blinn-phong",
@@ -93,63 +92,75 @@
 
 	// Hitable list
 	"OBJECTS": [
-		{ // Floor
-			"TYPE": "sphere",
-			"CENTER": [0.5, -99.75, -3],
-			"RADIUS": 100.005, 
+		{ // 0 - Floor 
+			"TYPE": "triangle",
+			"P0": [-10, -0.0001, -10],
+			"P2": [10, -0.0001, -10],
+			"P1": [0, -0.0001, 10],
 			"MATERIAL": 6
 		},
-		{ // Metal sphere
+		{ // 1 - Metal sphere
 			"TYPE": "sphere",
-			"CENTER": [-0.05, 0.5, -2],
+			"CENTER": [-0.05, 0.25, -2],
 			"RADIUS": 0.25, 
 			"MATERIAL": 1
 		},
-		{ // Blinn-phong sphere
+		{ // 2 - Blinn-phong sphere
 			"TYPE": "sphere",
-			"CENTER": [0.35, 0.4, -2],
+			"CENTER": [0.35, 0.15, -2],
 			"RADIUS": 0.15, 
 			"MATERIAL": 0
 		},
-		{ // Cook-torrance sphere
+		{ // 3 - Cook-torrance sphere
 			"TYPE": "sphere",
-			"CENTER": [0.65, 0.4, -2],
+			"CENTER": [0.65, 0.15, -2],
 			"RADIUS": 0.15, 
 			"MATERIAL": 7
 		},
-		{ // Blinn-phong sphere 2
+		{ // 4 - Blinn-phong sphere 2
 			"TYPE": "sphere",
-			"CENTER": [0.35, 1, -2.6],
+			"CENTER": [0.35, 0.75, -2.6],
 			"RADIUS": 0.15, 
 			"MATERIAL": 0
 		},
-		{ // Cook-torrance sphere 2
+		{ // 5 - Cook-torrance sphere 2
 			"TYPE": "sphere",
-			"CENTER": [0.65, 1, -2.6],
+			"CENTER": [0.65, 0.75, -2.6],
 			"RADIUS": 0.15, 
 			"MATERIAL": 7
 		},
-		{ // Water sphere
+		{ // 6 - Glass sphere
 			"TYPE": "sphere",
-			"CENTER": [1.05, 0.5, -2],
+			"CENTER": [1.05, 0.25, -2],
 			"RADIUS": 0.25, 
-			"MATERIAL": 3
-		},
-		{ // Anti-water sphere
-			"TYPE": "sphere",
-			"CENTER": [1.05, 0.525, -2],
-			"RADIUS": 0.225, 
-			"MATERIAL": 2
-		},
-		{ // Glass sphere
-			"TYPE": "sphere",
-			"CENTER": [1.45, 0.4, -2],
-			"RADIUS": 0.15, 
 			"MATERIAL": 4
 		},
-		{ // Jelly cube
+		{ // 7 - Anti-glass sphere
+			"TYPE": "sphere",
+			"CENTER": [1.05, 0.25, -2],
+			"RADIUS": 0.2, 
+			"MATERIAL": 2
+		},
+		{ // 8 - Water sphere
+			"TYPE": "sphere",
+			"CENTER": [1.45, 0.15, -2],
+			"RADIUS": 0.15, 
+			"MATERIAL": 3
+		},
+		{ // 9 - Jelly sphere
+			"TYPE": "sphere",
+			"CENTER": [-0.25, 0.1, -1],
+			"RADIUS": 0.1,
+			"MATERIAL": 5,
+			"TRANSFORM": [
+				{
+					//"SCALE": [1.2, 0.5, 1.2]
+				}
+			]
+		},
+		{ // 10 - Jelly cube
 			"TYPE": "cube",
-			"CENTER": [-0.25, 0.35, -1.6],
+			"CENTER": [-0.25, 0.1, -1.6],
 			"SIZE": [0.2, 0.2, 0.2],
 			"MATERIAL": 5
 		}

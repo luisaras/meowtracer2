@@ -32,34 +32,35 @@ Vec3 reflect(const Vec3 &dir, const Vec3 &normal) {
 	return dir - 2 * Vec3::dot(dir, normal) * normal;
 }
 
-Vec3 refract(const Vec3 &I, const Vec3 &N, float ior) {
-	float cosi = clamp(-1, 1, Vec3::dot(I, N));
+Vec3 refract(const Vec3 &ray, const Vec3 &normal, float ior) {
+	float cosi = clamp(Vec3::dot(ray, normal), -1, 1);
 	float etai = 1, etat = ior;
-	Vec3 n = N;
+	Vec3 n = normal;
 	if (cosi < 0)
 		cosi = -cosi;
 	else  {
 		std::swap(etai, etat); 
-		n = -N;
+		n = -normal;
 	}
 	float eta = etai / etat;
 	float k = 1 - eta * eta * (1 - cosi * cosi);
-	return k < 0 ? Vec3(0, 0, 0) : eta * I + (eta * cosi - sqrtf(k)) * n; 
+	return k < 0 ? Vec3(0, 0, 0) : eta * ray + (eta * cosi - sqrtf(k)) * n; 
 }
 
-float fresnel(const Vec3 &I, const Vec3 &N, float ior) {
+float fresnel(const Vec3 &ray, const Vec3 &normal, float ior) {
 	float kr;
-	float cosi = clamp(-1, 1, Vec3::dot(I, N));
+	float cosi = clamp(Vec3::dot(ray, normal), -1, 1);
 	float etai = 1, etat = ior;
 	if (cosi > 0)
 		std::swap(etai, etat);
 	// Compute sini using Snell's law
-	float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
+	float eta = etai / etat;
+	float sint = eta * std::max(0.f, 1 - cosi * cosi);
 	// Total internal reflection
 	if (sint >= 1)
-		kr = 1;
+		return 1;
 	else {
-		float cost = sqrtf(std::max(0.f, 1 - sint * sint));
+		float cost = sqrtf(std::max(0.f, 1 - sint * eta));
 		cosi = fabsf(cosi);
 		float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
 		float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));

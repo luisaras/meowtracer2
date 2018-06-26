@@ -11,7 +11,7 @@ private:
 	Point3 center;
 	float radius;
 public:
-	Sphere(Matrix4 &xform, Point3 p, float r);
+	Sphere(int id, Matrix4 &xform, Point3 p, float r);
 
 	// Hitable
 	RayHit hit(Ray &ray);

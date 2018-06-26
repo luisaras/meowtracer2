@@ -17,11 +17,12 @@ void addCube(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, Scene
 	// Triangles
 	vector<Point3> v;
 	cube.triangulate(v);
+	int id = scene.hitables.size();
 	for (uint i = 0; i < v.size(); i += 3) {
 		Point3 p0 = xform.transformPoint(v[i]);
 		Point3 p1 = xform.transformPoint(v[i + 1]);
 		Point3 p2 = xform.transformPoint(v[i + 2]);
-		Triangle* t = new Triangle(p0, p1, p2);
+		Triangle* t = new Triangle(id++, p0, p1, p2);
 		t->norm[0] = t->norm[1] = t->norm[2] = t->calculateNormal();
 		t->material = mat;
 		t->texture = tex;
@@ -32,16 +33,20 @@ void addCube(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, Scene
 Hitable* parsePrimitive(Object& hit_obj, string& type, Matrix4& xform, Material* mat, Texture* tex) {
 	Hitable* hit = 0;
 	if (type == "sphere") {
+		// Sphere
 		float r = hit_obj["RADIUS"].getReal();
 		Vec3 center = parseVec3(hit_obj["CENTER"]);
-		hit = new Sphere(xform, center, r);
+		hit = new Sphere(0, xform, center, r);
 	} else if (type == "triangle") {
 		// Triangle
 		Vec3 p0 = parseVec3(hit_obj["P0"]);
 		Vec3 p1 = parseVec3(hit_obj["P1"]);
 		Vec3 p2 = parseVec3(hit_obj["P2"]);
 		p0 = xform.transformPoint(p0); p1 = xform.transformPoint(p1); p2 = xform.transformPoint(p2);
-		hit = new Triangle(p0, p1, p2);
+		Triangle* t = new Triangle(0, p0, p1, p2);
+		Vec3 normal = hit_obj.count("NORMAL") ? parseVec3(hit_obj["NORMAL"]) : t->calculateNormal();
+		t->norm[0] = t->norm[1] = t->norm[2] = normal;
+		hit = t;
 	} else {
 		cout << "Object type not recognized: " << type << endl;
 		return 0;
@@ -69,7 +74,9 @@ bool parseHitables(Array& hit_arr, Scene& scene) {
 			addCube(hit_obj, xform, mat, tex, scene);
 		} else {
 			Hitable* obj = parsePrimitive(hit_obj, type, xform, mat, tex);
-			if (!obj) return false;
+			if (!obj) 
+				return false;
+			obj->id = scene.hitables.size();
 			scene.hitables.push_back(obj);
 		}
 	}

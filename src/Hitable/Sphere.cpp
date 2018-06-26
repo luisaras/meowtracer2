@@ -1,10 +1,9 @@
 #include "Sphere.h"
+#include "../Math/Util.h"
 #include <iostream>
-#include <cmath>
-#include <ctgmath>
-#define PI 3.14159265359
 
-Sphere::Sphere(Matrix4 &xform, Point3 p, float rad) : center(p), radius(rad) {	
+Sphere::Sphere(int id, Matrix4 &xform, Point3 p, float rad) : center(p), radius(rad) {	
+	this->id = id;
 	Matrix4 translation = Matrix4::translation(center);
 	Matrix4 scaling = Matrix4::scaling(radius);
 	transform = scaling * translation;
@@ -39,6 +38,7 @@ Color Sphere::getTexture(Vec2& uv) {
 
 RayHit Sphere::hit(Ray &ray) {
 	RayHit rh;
+	rh.t = NAN;
 
 	Point3 o = invt.transformPoint(ray.origin);
 	Vec3 d = invt.transformVector(ray.direction);
@@ -48,38 +48,47 @@ RayHit Sphere::hit(Ray &ray) {
 	float c = Vec3::dot(o, o) - 1;
 	float delta = b * b - 4 * a * c;
 
-	if (delta >= 0) {
-		Ray tRay = Ray(o, d, 1);
+	if (delta >= ERR) {
 		float sqrtdelta = std::sqrt(delta);
 		float t1 = (-b - sqrtdelta) / (2 * a);
 		float t2 = (-b + sqrtdelta) / (2 * a);
-		rh.t = std::min(t1, t2);
-		if (rh.t >= 0) {
-			rh.point = ray.at(rh.t);
-			rh.normal = tRay.at(rh.t);
+		if (t1 < 0)
+			rh.t = t2;
+		else if (t2 < 0)
+			rh.t = t1;
+		else
+			rh.t = std::min(t1, t2);
 
-			float x = rh.normal.x, y = rh.normal.y, z = rh.normal.z;
-			//float tetha = acos(z);
-			//float phi = atan(y / x);
-			//rh.texture = material->texture(tetha / (2 * PI), phi / (2 * PI), rh.normal);
-			//std::cout << x << " " << y << " " << z << " " << tetha / PI * 180 << " " << phi / PI * 180 << std::endl;
+		if (rh.t < 0)
+			return rh;
 
-			float phi = atan2(z, x);
-	    	float theta = asin(y);
-		    float u = 1-(phi + PI) / (2*PI);
-		    float v = (theta + PI/2) / PI;
-		    rh.uv = Vec2(u, v);
+		rh.point = ray.at(rh.t);
+		rh.normal = o + rh.t * d;
 
-			//float u = x / 2 + 0.5;
-			//float v = y / 2 + 0.5;
-			//rh.texture = material->texture(u, v, rh.normal);
+		float x = rh.normal.x, y = rh.normal.y, z = rh.normal.z;
+		//float tetha = acos(z);
+		//float phi = atan(y / x);
+		//rh.texture = material->texture(tetha / (2 * PI), phi / (2 * PI), rh.normal);
+		//std::cout << x << " " << y << " " << z << " " << tetha / PI * 180 << " " << phi / PI * 180 << std::endl;
 
-			rh.normal = transform.transformVector(rh.normal);
-			rh.normal = Vec3::normalize(rh.normal);
-			rh.hitable = this;
-		}
-	} else {
-		rh.t = NAN;
+		float phi = atan2(z, x);
+    	float theta = asin(y);
+	    float u = 1-(phi + PI) / (2*PI);
+	    float v = (theta + PI/2) / PI;
+	    rh.uv = Vec2(u, v);
+
+		//float u = x / 2 + 0.5;
+		//float v = y / 2 + 0.5;
+		//rh.texture = material->texture(u, v, rh.normal);
+
+		rh.normal = transform.transformVector(rh.normal);
+		rh.normal = Vec3::normalize(rh.normal);
+
+		//if (Vec3::dot(ray.direction, rh.normal) > 0)
+			//std::cout << "bla" << std::endl;
+
+		rh.hitable = this;
 	}
+
 	return rh;
 }
