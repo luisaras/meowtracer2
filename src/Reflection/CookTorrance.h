@@ -1,11 +1,10 @@
 
 #pragma once
 
-#include "ReflectionModel.h"
+#include "../Math/Util.h"
+#include "../Light/Light.h"
 
-class CookTorrance : public ReflectionModel {
-protected:
-	virtual Color lightColor (Light* light, LightHit& lh, Color& texture);
+class CookTorrance {
 public:
-	Color getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rayHit);
+	Color lightColor(Light* light, LightHit& lh, Color& texture);
 };

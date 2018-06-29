@@ -1,12 +1,10 @@
 
 #pragma once
 
-#include "ReflectionModel.h"
+#include "../Light/Light.h"
 
-class BlinnPhong : public ReflectionModel {
-protected:
-	Color diffuseColor (Light* light, LightHit &lh);
-	Color specularColor(Light* light, LightHit &lh);
+class BlinnPhong {
 public:
-	Color getColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rayHit);
+	Color diffuseColor (Light* light, LightHit &lh, Color& color);
+	Color specularColor(Light* light, LightHit &lh);
 };

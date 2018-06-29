@@ -60,6 +60,10 @@ Vec3 Vec3::exp() const {
     return Vec3(std::exp(x), std::exp(y), std::exp(z));
 }
 
+Vec3 Vec3::abs() const {
+    return Vec3(std::abs(x), std::abs(y), std::abs(z));
+}
+
 Vec3 Vec3::clamp(float min, float max) const {
     float _x = fmin(max, fmax(min, x));
     float _y = fmin(max, fmax(min, y));

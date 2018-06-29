@@ -43,6 +43,7 @@ struct Vec3 {
      bool inf() const;
 
      Vec3 exp() const;
+     Vec3 abs() const;
      Vec3 clamp(float min, float max) const;
 
 #ifdef USE_D3D

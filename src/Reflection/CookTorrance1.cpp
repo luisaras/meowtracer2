@@ -1,7 +1,3 @@
-#include "CookTorrance.h"
-#include "../Math/Util.h"
-#define SamplesCount 8
-
 Color CookTorrance::lightColor(Light* light, LightHit& lh, Color& texture) {
 
 	// Parameters
