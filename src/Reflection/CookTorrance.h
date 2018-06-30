@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "../Math/Util.h"
 #include "../Light/Light.h"
 #include "../Tree/CubeTree.h"
 #include "../Renderer/Scene.h"

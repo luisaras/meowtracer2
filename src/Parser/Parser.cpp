@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "../Renderer/RayTracer.h"
+#include "../Renderer/PathTracer.h"
 #include "../Camera/PerspectiveCamera.h"
 #include "../Camera/OrthogonalCamera.h"
 #include "SceneParser.h"
@@ -42,10 +43,12 @@ Camera* parseCamera(Value& cam_js) {
 	}
 }
 
-RayTracer* parseRenderer(Value& renderer_js, Value& bg_js, Camera* cam) {
+Tracer* parseRenderer(Value& renderer_js, Value& bg_js, Camera* cam) {
 	Object renderer_obj = renderer_js.getObject();
 	Object bg_obj = bg_js.getObject();
-	RayTracer* rt = new RayTracer(cam);
+	// Algorithm
+	string type = renderer_obj["TYPE"].getString();
+	Tracer* rt = type == "raytracer" ? (Tracer*) new RayTracer(cam) : (Tracer*) new PathTracer(cam);
 	// Background
 	rt->tl = bg_obj.count("UPPER_LEFT") ? parseVec3(bg_obj["UPPER_LEFT"]) : Vec3(1, 1, 1);
 	rt->tr = bg_obj.count("UPPER_RIGHT") ? parseVec3(bg_obj["UPPER_RIGHT"]) : Vec3(1, 1, 1);
@@ -54,7 +57,8 @@ RayTracer* parseRenderer(Value& renderer_js, Value& bg_js, Camera* cam) {
 	// Renderer parameters
 	if (renderer_obj.count("TREEDEPTH")) rt->treeDepth = renderer_obj["TREEDEPTH"].getInt();
 	if (renderer_obj.count("RAYDEPTH")) rt->rayDepth = renderer_obj["RAYDEPTH"].getInt();
-	if (renderer_obj.count("SAMPLES")) rt->sampleCount = renderer_obj["SAMPLES"].getInt();
+	if (renderer_obj.count("SPP")) rt->spp = renderer_obj["SPP"].getInt();
+	if (renderer_obj.count("SPR")) rt->spr = renderer_obj["SPR"].getInt();
 	if (renderer_obj.count("THREADS")) rt->threadCount = renderer_obj["THREADS"].getInt();
 	return rt;
 }
@@ -67,9 +71,9 @@ bool Parser::parse(string& content) {
 	rowCount = input_obj["HEIGHT"].getInt();
 	Camera* camera = parseCamera(input_obj["CAMERA"]);
 	if (!camera) return false;
-	RayTracer* rayTracer = parseRenderer(input_obj["RENDERER"], input_obj["BACKGROUND"], camera);
-	renderer = rayTracer;
-	return parseScene(input_obj, rayTracer->scene);
+	Tracer* tracer = parseRenderer(input_obj["RENDERER"], input_obj["BACKGROUND"], camera);
+	renderer = tracer;
+	return parseScene(input_obj, tracer->scene);
 }
 
 bool Parser::load(string& fileName) {

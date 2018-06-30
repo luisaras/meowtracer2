@@ -13,6 +13,7 @@
 
 	// Ray Tracer parameters
 	"RENDERER": {
+	"TYPE": "raytracer",
 		"TREEDEPTH": 10,
 		"RAYDEPTH": 10,
 		"SAMPLES": 64,

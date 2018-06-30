@@ -39,7 +39,7 @@ $(foreach i,$(PARSER),$(eval $(call recipe,$(i),Parser/)))
 REF = BlinnPhong CookTorrance
 $(foreach i,$(REF),$(eval $(call recipe,$(i),Reflection/)))
 
-RENDS = Renderer RayTracer
+RENDS = Renderer RayTracer PathTracer
 $(foreach i,$(RENDS),$(eval $(call recipe,$(i),Renderer/)))
 
 TREE = Box CubeTree

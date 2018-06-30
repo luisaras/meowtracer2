@@ -11,7 +11,6 @@ class Material {
 public:
 	Material(MaterialType t) : type(t) {}
 	MaterialType type;
-	bool recursive = true;
 
 	// Phong
 	Color ka = Color(1, 1, 1);

@@ -3,14 +3,6 @@
 #include "../Reflection/CookTorrance.h"
 #include "../Math/Util.h"
 
-void RayTracer::preprocess() {
-	tree = new CubeTree(scene.hitables, treeDepth, treeSize);
-}
-
-Color RayTracer::getColor(Ray &ray, float x, float y) {
-	return getColor(ray, x, y, rayDepth);
-}
-
 Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (depth == 0)
 		return Color(0, 0, 0);
@@ -32,7 +24,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 // ============================================================================
 //  Ray-casting
 // ============================================================================
-	if (!mat->recursive) {
+	if (mat->type == BLINNPHONG || mat->type == COOKTORRANCE) {
 		Color color;
 		if (mat->type == BLINNPHONG) {
 			color = BlinnPhong().localColor(tree, scene, ray, rh, texture);
@@ -50,23 +42,12 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	}
 
 // ============================================================================
-//  Blinn-Phong
-// ============================================================================
-	if (mat->type == BLINNPHONG) {
-		
-	}
-
-// ============================================================================
-//  Cook-Torrance
+//  Ray-tracing
 // ============================================================================
 	float cosi = Vec3::dot(ray.direction, rh.normal);
 	bool outside = cosi < 0;
 	Vec3 bias = ERR * rh.normal;
 	Point3 reflectedRayOrig = outside ? rh.point + bias : rh.point - bias;
-
-	if (mat->type == COOKTORRANCE) {
-		
-	}
 
 // ============================================================================
 //  Lambertian
@@ -132,8 +113,4 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 
 	Color color = (reflectionColor * fr + refractionColor * (1 - fr));
 	return absorbed * (mat->ke + texture * color);
-}
-
-RayTracer::~RayTracer() {
-	delete tree;
 }

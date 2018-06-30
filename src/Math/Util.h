@@ -17,9 +17,18 @@
 
 Vec2 randomVec2();
 Vec3 randomUnitVec3();
-Vec3 angle2Vec3(float cost, float phi);
-Vec3 GGX(const Vec2 &e, float r);
-Vec3 GGX(float r);
 
+float fresnel(float c, float nt, float ni);
+Vec3 schlick(float h_wi, Vec3& f0);
+
+Vec3 angle2Vec3(float cost, float phi);
+
+float chi(float val);
 float clamp(float x, float min, float max);
-Color clampColor(Color& color);
+float saturate(float x);
+
+// Beckmann
+Vec2 random_Beckmann(Vec2& e, float ab2);
+float D_Beckmann(float ab2, float m_n);
+float G_Beckmann(float n_h, float n_wi, float n_w0, float h_w0);
+float G1_Beckmann(float v_m, float v_n, float rough);

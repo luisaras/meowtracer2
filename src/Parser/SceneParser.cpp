@@ -66,8 +66,6 @@ Material* parseMaterial(Value& mat_js) {
 	}
 	Material* m = new Material(t);
 	// Properties
-	if (mat_obj.count("RECURSIVE"))
-		m->recursive = mat_obj["RECURSIVE"].getBool();
 	if (mat_obj.count("KA"))
 		m->ka = parseVec3(mat_obj["KA"]);
 	if (mat_obj.count("KD"))
