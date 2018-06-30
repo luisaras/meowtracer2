@@ -44,6 +44,7 @@
 	"MATERIALS": [
 		{ // Material 0 - Blinn-Phong
 			"TYPE": "blinn-phong",
+			"RECURSIVE": false,
 			"KD": [0.8, 0.3, 0.8],
 			"KS": [0.8, 0.4, 0.8],
 			"SHINE": 24,
@@ -51,6 +52,7 @@
 		},
 		{ // Material 1 - Cook-Torrance
 			"TYPE": "cook-torrance",
+			"RECURSIVE": false,
 			"KD": [0.8, 0.3, 0.8],
 			"KS": [0.18, 0.09, 0.18],
 			"ROUGH": 0.25,
@@ -58,6 +60,7 @@
 		},
 		{ // Material 2 - Floor
 			"TYPE": "blinn-phong",
+			"RECURSIVE": false,
 			"KD": [0.8, 0.3, 0.8],
 			"KS": [0.8, 0.4, 0.8],
 			"SHINE": 8,

@@ -1,7 +1,19 @@
 #include "BlinnPhong.h"
 #define ERR 0.00001
 
-Color BlinnPhong::diffuseColor (Light* light, LightHit &lh, Color& color) {
+Color BlinnPhong::localColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh, Color& texture) {
+	Color lit(0, 0, 0);
+	for (uint i = 0; i < scene.lights.size(); i++) {
+		LightHit lh = scene.lights[i]->hit(ray, rh);
+		if (!tree->hitsLight(scene.lights[i], lh)) {
+			lit += localDiffuse(scene.lights[i], lh, texture);
+			lit += localSpecular(scene.lights[i], lh);
+		}
+	}
+	return lit + rh.hitable->material->ka * scene.ambientColor;
+}
+
+Color BlinnPhong::localDiffuse(Light* light, LightHit &lh, Color& color) {
 	float r = Vec3::dot(lh.direction, lh.rayHit.normal);
 	if (r > ERR) {
 		return (color * lh.color) * fmin(1.0, r);
@@ -9,7 +21,7 @@ Color BlinnPhong::diffuseColor (Light* light, LightHit &lh, Color& color) {
 	return Color(0, 0, 0);
 }
 
-Color BlinnPhong::specularColor(Light* light, LightHit &lh) {
+Color BlinnPhong::localSpecular(Light* light, LightHit &lh) {
 	Vec3 half = lh.direction - lh.ray.direction;
 	half = Vec3::normalize(half);
 	float r = Vec3::dot(half, lh.rayHit.normal);

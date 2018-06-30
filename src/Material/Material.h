@@ -4,13 +4,14 @@
 #include "../Math/Vec3.h"
 
 enum MaterialType {
-	BLINNPHONG, COOKTORRANCE, LAMBERTIAN, METAL, DIELECTRIC, BEERS
+	BLINNPHONG, COOKTORRANCE, LAMBERTIAN, METAL, DIELECTRIC
 };
 
 class Material {
 public:
 	Material(MaterialType t) : type(t) {}
 	MaterialType type;
+	bool recursive = true;
 
 	// Phong
 	Color ka = Color(1, 1, 1);

@@ -18,7 +18,7 @@ public:
 	CubeTree(Hitable* hitable);
 	CubeTree(vector<Hitable*>& triangles, int maxDepth, int maxLeaves);
 
-	RayHit hit(Ray& ray);
+	RayHit hit(Ray& ray, bool shadows = false);
 	bool hitsLight(Light* light, LightHit& lh);
 
 	~CubeTree();

@@ -5,17 +5,17 @@
 
 	// Background color
 	"BACKGROUND": {
-		"UPPER_LEFT": [1, 1, 1],
-		"UPPER_RIGHT": [1, 1, 1],
-		"LOWER_LEFT": [0, 0, 1],
-		"LOWER_RIGHT": [0, 0, 1]
+		"UPPER_LEFT": [0.2, 0.2, 0.2],
+		"UPPER_RIGHT": [0.2, 0.2, 0.2],
+		"LOWER_LEFT": [0, 0, 0.2],
+		"LOWER_RIGHT": [0, 0, 0.2]
 	},
 
 	// Ray Tracer parameters
 	"RENDERER": {
 		"TREEDEPTH": 10,
 		"RAYDEPTH": 10,
-		"SAMPLES": 8,
+		"SAMPLES": 64,
 		"THREADS": 4
 	},
 
@@ -66,10 +66,10 @@
 		{ // Material 4 - Glass
 			"TYPE": "dielectric",
 			"KD": [1, 0.5, 1],
-			"REFRACTION": 1.5
+			"REFRACTION": 1.2
 		},
 		{ // Material 5 - Jelly
-			"TYPE": "beers",
+			"TYPE": "dielectric",
 			"KD": [1, 1, 1],
 			"REFRACTION": 1.21,
 			"ABSORB": [8, 8, 3]
@@ -85,8 +85,18 @@
 			"TYPE": "cook-torrance",
 			"KD": [0.8, 0.3, 0.8],
 			"KS": [0.18, 0.09, 0.18],
-			"ROUGH": 0.25,
+			"ROUGH": 0.3,
 			"REFLECT": 0
+		},
+		{ // Material 8 - Light
+			"TYPE": "dielectric",
+			"KE": [1, 1, 1],
+			"REFRACTION": 1.00029
+		},
+		{ // Material 9 - Lambertian
+			"TYPE": "lambertian",
+			"KD": [1, 0.2, 1],
+			"FUZZ": 1
 		}
 	],
 
@@ -135,10 +145,10 @@
 			"RADIUS": 0.25, 
 			"MATERIAL": 4
 		},
-		{ // 7 - Anti-glass sphere
+		{ // 7 - Air sphere
 			"TYPE": "sphere",
-			"CENTER": [1.05, 0.27, -2],
-			"RADIUS": 0.225,
+			"CENTER": [1.45, 0.15, -2],
+			"RADIUS": 0.1,
 			"MATERIAL": 2
 		},
 		{ // 8 - Water sphere
@@ -154,7 +164,7 @@
 			"MATERIAL": 5,
 			"TRANSFORM": [{
 				"SCALE": [1.2, 0.5, 1.2],
-				"TRANSLATION": [0, -0.25, 0]
+				"TRANSLATION": [0, -0.5, 0]
 			}]
 		},
 		{ // 10 - Jelly cube
@@ -162,6 +172,26 @@
 			"CENTER": [-0.25, 0.1, -1.6],
 			"SIZE": [0.2, 0.2, 0.2],
 			"MATERIAL": 5
+		},
+		{ // 11 - Lambertian
+			"TYPE": "sphere",
+			"CENTER": [1.2, 0.75, -2.6],
+			"RADIUS": 0.15, 
+			"MATERIAL": 9
+		},
+		{ // 12 - Light sphere
+			"TYPE": "sphere",
+			"SHADOWS": false,
+			"CENTER": [1.4, 0.5, -2],
+			"RADIUS": 0.1, 
+			"MATERIAL": 8
+		},
+		{ // 13 - Light sphere
+			"TYPE": "sphere",
+			"SHADOWS": false,
+			"CENTER": [-0.4, 0.4, -1],
+			"RADIUS": 0.05, 
+			"MATERIAL": 8
 		}
 	]
 }

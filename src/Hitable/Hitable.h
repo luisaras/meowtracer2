@@ -14,6 +14,7 @@ public:
 	int id;
 	Material* material;
 	Texture* texture;
+	bool castShadows = true;
 	virtual RayHit hit(Ray& ray) = 0;
 	virtual Box hitBox() = 0;
 	virtual Color getTexture(Vec2& uv) = 0;

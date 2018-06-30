@@ -1,0 +1,134 @@
+{
+	// Image size
+	"WIDTH": 1200,
+	"HEIGHT": 600,
+
+	// Background color
+	"BACKGROUND": {
+		"UPPER_LEFT": [0.2, 0.2, 1],
+		"UPPER_RIGHT": [0.2, 0.2, 1],
+		"LOWER_LEFT": [1, 0.5, 0.1],
+		"LOWER_RIGHT": [1, 0.5, 0.1]
+	},
+
+	// Ray Tracer parameters
+	"RENDERER": {
+		"TREEDEPTH": 10,
+		"RAYDEPTH": 8,
+		"SAMPLES": 1,
+		"THREADS": 4
+	},
+
+	// Camera
+	"CAMERA": {
+		"TYPE": "perspective",
+		"WIDTH": 1,
+		"HEIGHT": 0.5,
+		"CENTER": [0.5, 0.3, 0],
+		"VIEWER": [0, 0, 1],
+		"REFRACTION": 1.00029
+	},
+
+	// Light
+	"LIGHTS": [
+		{
+			"TYPE": "point",
+			"COLOR": [1, 1, 1],
+			"ORIGIN": [0.5, 1, -2],
+			"LENGTH": 1
+		}
+	],
+	"AMBIENT": [0.05, 0.05, 0.1],
+
+	// Material list
+	"MATERIALS": [
+		{ // Material 0 - Air
+			"TYPE": "dielectric",
+			"KD": [1, 1, 1],
+			"REFRACTION": 1.00029
+		},
+		{ // Material 1 - Water
+			"TYPE": "dielectric",
+			"KD": [1, 1, 1],
+			"REFRACTION": 1.330
+		},
+		{ // Material 2 - Glass
+			"TYPE": "dielectric",
+			"KD": [1, 0.5, 1],
+			"REFRACTION": 1.2
+		},
+		{ // Material 3 - Jelly
+			"TYPE": "dielectric",
+			"KD": [1, 1, 1],
+			"REFRACTION": 1.21,
+			"ABSORB": [8, 8, 3]
+		},
+		{ // Material 4 - Phong (wall)
+			"TYPE": "blinn-phong",
+			"RECURSIVE": false,
+			"KD": [0.5, 0.5, 0.5],
+			"KS": [0.8, 0.64, 0.64],
+			"SHINE": 8,
+			"REFLECT": 0.2
+		},
+		{ // Material 5 - Light
+			"TYPE": "dielectric",
+			"KE": [1, 1, 1],
+			"REFRACTION": 1.00029
+		}
+	],
+
+	// Hitable list
+	"OBJECTS": [
+		{ // 0 - Floor 
+			"TYPE": "triangle",
+			"P0": [-10, -0.0001, -10],
+			"P2": [10, -0.0001, -10],
+			"P1": [0, -0.0001, 10],
+			"MATERIAL": 4
+		},
+		{ // 1 - Glass sphere
+			"TYPE": "sphere",
+			"CENTER": [0.1, 0.3, -2],
+			"RADIUS": 0.3, 
+			"MATERIAL": 2
+		},
+		{ // 2 - Air sphere
+			"TYPE": "sphere",
+			"SHADOWS": false,
+			"CENTER": [0.9, 0.3, -2],
+			"RADIUS": 0.2,
+			"MATERIAL": 0
+		},
+		{ // 3 - Water sphere
+			"TYPE": "sphere",
+			"SHADOWS": false,
+			"CENTER": [0.9, 0.3, -2],
+			"RADIUS": 0.3, 
+			"MATERIAL": 1
+		},
+		{ // 4 - Jelly sphere
+			"TYPE": "sphere",
+			"CENTER": [-0.25, 0.1, -1],
+			"RADIUS": 0.1,
+			"MATERIAL": 3,
+			"TRANSFORM": [{
+				"SCALE": [1.2, 0.5, 1.2],
+				"TRANSLATION": [0, -0.5, 0]
+			}]
+		},
+		{ // 5 - Jelly cube
+			"TYPE": "cube",
+			"CENTER": [-0.25, 0.1, -1.6],
+			"SIZE": [0.2, 0.2, 0.2],
+			"MATERIAL": 3
+		},
+		{ // 6 - Light sphere
+			"TYPE": "sphere",
+			"SHADOWS": false,
+			"CENTER": [1.4, 0.5, -2],
+			"RADIUS": 0.1, 
+			"MATERIAL": 5
+		}
+	]
+}

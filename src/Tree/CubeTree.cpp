@@ -73,7 +73,7 @@ CubeTree::CubeTree(vector<Hitable*>& hitables, int maxDepth, int maxNodes) {
 	}
 }
 
-RayHit CubeTree::hit(Ray& ray) {
+RayHit CubeTree::hit(Ray& ray, bool shadows) {
 	RayHit minrh;
 
 	stack<CubeTree*> trees;
@@ -83,9 +83,11 @@ RayHit CubeTree::hit(Ray& ray) {
 		trees.pop();
 		if (tree->bounds.hit(ray)) {
 			if (tree->hitable) {
-				RayHit rh = tree->hitable->hit(ray);
-				if (!isnan(rh.t) && rh.t > 0 && (rh.t < minrh.t || isnan(minrh.t))) {
-					minrh = rh;
+				if (tree->hitable->castShadows || !shadows) {
+					RayHit rh = tree->hitable->hit(ray);
+					if (!isnan(rh.t) && rh.t > 0 && (rh.t < minrh.t || isnan(minrh.t))) {
+						minrh = rh;
+					}
 				}
 			} else {
 				for (uint i = 0; i < tree->children.size(); i++)
@@ -97,8 +99,8 @@ RayHit CubeTree::hit(Ray& ray) {
 }
 
 bool CubeTree::hitsLight(Light* light, LightHit& lh) {
-	Ray ray(lh.rayHit.point + lh.direction * ERR * 10, lh.direction, 1);
-	RayHit rh = hit(ray);
+	Ray ray(lh.rayHit.point + lh.direction * ERR, lh.direction, 1);
+	RayHit rh = hit(ray, true);
 	return !isnan(rh.t) && rh.t > ERR && rh.t <= lh.distance;
 }
 

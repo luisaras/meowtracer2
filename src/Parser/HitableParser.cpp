@@ -2,11 +2,11 @@
 #include "../Hitable/Sphere.h"
 #include "../Hitable/Triangle.h"
 
-void addMesh(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, Scene& scene) {
+void addMesh(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, bool shadows, Scene& scene) {
 	// TODO
 }
 
-void addCube(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, Scene& scene) {
+void addCube(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, bool shadows, Scene& scene) {
 	Vec3 size = parseVec3(hit_obj["SIZE"]);
 	Vec3 center = parseVec3(hit_obj["CENTER"]);
 	// Box
@@ -26,6 +26,7 @@ void addCube(Object& hit_obj, Matrix4& xform, Material* mat, Texture* tex, Scene
 		t->norm[0] = t->norm[1] = t->norm[2] = t->calculateNormal();
 		t->material = mat;
 		t->texture = tex;
+		t->castShadows = shadows;
 		scene.hitables.push_back(t);
 	}
 }
@@ -66,17 +67,19 @@ bool parseHitables(Array& hit_arr, Scene& scene) {
 		// Material
 		Material* mat = scene.materials[hit_obj["MATERIAL"].getInt()];
 		Texture* tex = hit_obj.count("TEXTURE") ? scene.textures[hit_obj["TEXTURE"].getInt()] : NULL;
+		bool shadows = hit_obj.count("SHADOWS") ? hit_obj["SHADOWS"].getBool() : true;
 		// Type
 		string type = hit_obj["TYPE"].getString();
 		if (type == "obj") {
-			addMesh(hit_obj, xform, mat, tex, scene);
+			addMesh(hit_obj, xform, mat, tex, shadows, scene);
 		} else if (type == "cube") {
-			addCube(hit_obj, xform, mat, tex, scene);
+			addCube(hit_obj, xform, mat, tex, shadows, scene);
 		} else {
 			Hitable* obj = parsePrimitive(hit_obj, type, xform, mat, tex);
 			if (!obj) 
 				return false;
 			obj->id = scene.hitables.size();
+			obj->castShadows = shadows;
 			scene.hitables.push_back(obj);
 		}
 	}
