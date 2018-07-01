@@ -7,8 +7,8 @@
 
 class BlinnPhong {
 protected:
-	Color localDiffuse(Light* light, LightHit &lh, Color& color);
+	Color localDiffuse(Light* light, LightHit &lh);
 	Color localSpecular(Light* light, LightHit &lh);
 public:
-	Color localColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh, Color& texture);
+	Color localColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& rh);
 };

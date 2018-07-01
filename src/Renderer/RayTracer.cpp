@@ -19,7 +19,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	Color absorbed = (-ray.absorb * distance).exp();
 	absorbed = absorbed.clamp(0, 1);
 
-	Color texture = rh.hitable->getTexture(rh.uv) * mat->kd;
+	Color texture = rh.hitable->getTexture(rh.uv);
 
 // ============================================================================
 //  Ray-casting
@@ -27,18 +27,18 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (mat->type == BLINNPHONG || mat->type == COOKTORRANCE) {
 		Color color;
 		if (mat->type == BLINNPHONG) {
-			color = BlinnPhong().localColor(tree, scene, ray, rh, texture);
+			color = BlinnPhong().localColor(tree, scene, ray, rh);
 		} else {
-			color = CookTorrance().localColor(tree, scene, ray, rh, texture);
+			color = CookTorrance().localColor(tree, scene, ray, rh);
 		}
 		if (mat->reflectivity > 0) {
 			Vec3 bias = ERR * rh.normal;
-			Vec3 reflected = ray.direction - 2 * Vec3::dot(ray.direction, rh.normal) * rh.normal;
+			Vec3 reflected = reflect(ray.direction, rh.normal);
 			Ray reflectedRay(rh.point + bias, reflected, ray.refraction, ray.absorb);
 			color = color * (1 - mat->reflectivity) + 
 				getColor(reflectedRay, x, y, depth - 1) * mat->reflectivity;
 		}
-		return absorbed * (mat->ke + color);
+		return absorbed * (mat->ke + texture * color);
 	}
 
 // ============================================================================
@@ -56,7 +56,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 		Vec3 direction = randomUnitVec3() * mat->fuzz + rh.normal;
 		Ray scattered(reflectedRayOrig, direction, ray.refraction, ray.absorb);
 		Color color = getColor(scattered, x, y, depth - 1);
-		return absorbed * (mat->ke + texture * color);
+		return absorbed * (mat->ke + mat->kd * texture * color);
 	}
 
 // ============================================================================
@@ -70,7 +70,7 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (mat->type == METAL) {
 		reflectedRay.direction += randomUnitVec3() * mat->fuzz;
 		Color color = getColor(reflectedRay, x, y, depth - 1);
-		return absorbed * (mat->ke + texture * color);
+		return absorbed * (mat->ke + mat->kd * texture * color);
 	}
 
 // ============================================================================
@@ -112,5 +112,5 @@ Color RayTracer::getColor(Ray &ray, float x, float y, int depth) {
 	}
 
 	Color color = (reflectionColor * fr + refractionColor * (1 - fr));
-	return absorbed * (mat->ke + texture * color);
+	return absorbed * (mat->ke + mat->kd * texture * color);
 }

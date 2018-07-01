@@ -45,6 +45,7 @@ struct Vec3 {
      Vec3 exp() const;
      Vec3 abs() const;
      Vec3 clamp(float min, float max) const;
+     Vec3 perp() const;
 
 #ifdef USE_D3D
      operator D3DXVECTOR3() const;

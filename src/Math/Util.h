@@ -18,10 +18,13 @@
 Vec2 randomVec2();
 Vec3 randomUnitVec3();
 
+Vec3 reflect(Vec3& v, Vec3& n);
+Vec3 refract(Vec3& v, Vec3& n, float refr);
 float fresnel(float c, float nt, float ni);
 Vec3 schlick(float h_wi, Vec3& f0);
 
-Vec3 angle2Vec3(float cost, float phi);
+Vec3 angle2Vec(float tetha, float phi);
+Vec2 vec2Angle(Vec3& v);
 
 float chi(float val);
 float clamp(float x, float min, float max);

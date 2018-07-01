@@ -35,9 +35,7 @@ public:
     // Vector transforms
     //
     Vec3 transform(const Vec3 &Right, float w = 1) const;
-
     Point3 transformPoint(const Point3 &point) const;
-    
     Vec3 transformVector(const Vec3 &normal) const;
 
 #ifdef USE_D3D
@@ -106,6 +104,8 @@ public:
     static Matrix4 viewport(float Width, float Height);
     static Matrix4 changeOfBasis(const Vec3 &Source0, const Vec3 &Source1, const Vec3 &Source2, const Vec3 &SourceOrigin, 
                                  const Vec3 &Target0, const Vec3 &Target1, const Vec3 &Target2, const Vec3 &TargetOrigin);
+    static Matrix4 changeOfBasis(const Vec3 &v);
+
 private:
     float _Entries[4][4];
 };

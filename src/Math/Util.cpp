@@ -16,17 +16,34 @@ Vec2 randomVec2() {
 	return Vec2(rand() / RAND_MAX, rand() / RAND_MAX);
 }
 
-Vec3 angle2Vec3(float cost, float phi) {
+Vec3 angle2Vec(float cost, float phi) {
 	float sint = sqrt(1 - cost * cost);
 	float x = sint * cos(phi);
 	float y = sint * sin(phi);
 	return Vec3(x, y, cost);
 }
 
+Vec2 vec2Angle(Vec3& v) {
+	float r = v.length();
+	float phi = atan(v.y / v.x);
+	return Vec2(v.z / r, phi);
+}
+
 Vec3 randomUnitVec3() {
 	float phi = PI2 * rand() / RAND_MAX;
 	float cost = 1.0 * rand() / RAND_MAX;
-	return angle2Vec3(cost, phi);
+	return angle2Vec(cost, phi);
+}
+
+Vec3 reflect(Vec3& v, Vec3& n) {
+	return v - 2 * Vec3::dot(v, n) * n;
+}
+
+Vec3 refract(Vec3& v, Vec3& n, float refr) {
+	float cosi = Vec3::dot(v, n);
+	float k = 1 - refr * refr * (1 - cosi * cosi);
+	float cost = sqrt(k);
+	return refr * v + (refr * cosi - cost) * n;
 }
 
 Vec3 schlick(float h_wi, Vec3& f0) {
@@ -89,5 +106,5 @@ Vec2 random_Beckmann(Vec2& e, float ab2) {
 	float tg = sqrt(atan(-ab2 * log(1 - e.x)));
 	float tetha = atan(tg);
 	float phi = 2 * PI * e.y;
-	return Vec2(tetha, phi);
+	return Vec2(cos(tetha), phi);
 }

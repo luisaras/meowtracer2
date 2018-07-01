@@ -556,6 +556,13 @@ Matrix4 Matrix4::changeOfBasis(const Vec3 &Source0, const Vec3 &Source1, const V
     //return translation(TargetOrigin - SourceOrigin);
 }
 
+Matrix4 Matrix4::changeOfBasis(const Vec3 &v) {
+    Vec3 i(v.x, 0, 0);
+    Vec3 j(0, v.y, 0);
+    Vec3 k(0, 0, v.z);
+    return Matrix4(i, j, k);
+} 
+
 Matrix4 Matrix4::viewport(float Width, float Height) {
     return Matrix4::scaling(Vec3(Width * 0.5f, -Height * 0.5f, 1.0f)) * Matrix4::translation(Vec3(Width * 0.5f, Height * 0.5f, 0.0f));
 }

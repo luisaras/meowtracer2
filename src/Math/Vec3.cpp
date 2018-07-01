@@ -40,6 +40,10 @@ Vec3 Vec3::randomNormal() {
     return normalize(randomVector());
 }
 
+Vec3 Vec3::perp() const {
+    return Vec3(-y, x, 0);
+}
+
 float Vec3::length() const {
     return sqrtf(x * x + y * y + z * z);
 }

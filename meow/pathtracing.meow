@@ -43,39 +43,16 @@
 
 	// Material list
 	"MATERIALS": [
-		{ // Material 0 - Air
-			"TYPE": "dielectric",
-			"KD": [1, 1, 1],
-			"REFRACTION": 1.00029
-		},
-		{ // Material 1 - Water
-			"TYPE": "dielectric",
-			"KD": [1, 1, 1],
-			"REFRACTION": 1.330
-		},
-		{ // Material 2 - Glass
-			"TYPE": "dielectric",
-			"KD": [1, 0.5, 1],
-			"REFRACTION": 1.2
-		},
-		{ // Material 3 - Jelly
-			"TYPE": "dielectric",
-			"KD": [1, 1, 1],
-			"REFRACTION": 1.21,
-			"ABSORB": [8, 8, 3]
-		},
-		{ // Material 4 - Phong (wall)
-			"TYPE": "blinn-phong",
-			"RECURSIVE": false,
-			"KD": [0.5, 0.5, 0.5],
-			"KS": [0.8, 0.64, 0.64],
-			"SHINE": 8,
-			"REFLECT": 0.2
-		},
-		{ // Material 5 - Light
+		{ // Material 0 - Light
 			"TYPE": "dielectric",
 			"KE": [1, 1, 1],
 			"REFRACTION": 1.00029
+		},
+		{ // Material 1 - Cook-Torrance
+			"TYPE": "cook-torrance",
+			"KD": [0.5, 0.5, 0.5],
+			"KS": [0.8, 0.64, 0.64],
+			"ROUGH": 0.2
 		}
 	],
 
@@ -86,50 +63,20 @@
 			"P0": [-10, -0.0001, -10],
 			"P2": [10, -0.0001, -10],
 			"P1": [0, -0.0001, 10],
-			"MATERIAL": 4
-		},
-		{ // 1 - Glass sphere
-			"TYPE": "sphere",
-			"CENTER": [0.1, 0.3, -2],
-			"RADIUS": 0.3, 
-			"MATERIAL": 2
-		},
-		{ // 2 - Air sphere
-			"TYPE": "sphere",
-			"SHADOWS": false,
-			"CENTER": [0.9, 0.3, -2],
-			"RADIUS": 0.2,
-			"MATERIAL": 0
-		},
-		{ // 3 - Water sphere
-			"TYPE": "sphere",
-			"SHADOWS": false,
-			"CENTER": [0.9, 0.3, -2],
-			"RADIUS": 0.3, 
 			"MATERIAL": 1
 		},
-		{ // 4 - Jelly sphere
+		{ // 1 - Sample shere
 			"TYPE": "sphere",
-			"CENTER": [-0.25, 0.1, -1],
-			"RADIUS": 0.1,
-			"MATERIAL": 3,
-			"TRANSFORM": [{
-				"SCALE": [1.2, 0.5, 1.2],
-				"TRANSLATION": [0, -0.5, 0]
-			}]
+			"CENTER": [0.5, 0.5, -2],
+			"RADIUS": 0.3,
+			"MATERIAL": 1
 		},
-		{ // 5 - Jelly cube
-			"TYPE": "cube",
-			"CENTER": [-0.25, 0.1, -1.6],
-			"SIZE": [0.2, 0.2, 0.2],
-			"MATERIAL": 3
-		},
-		{ // 6 - Light sphere
+		{ // 2 - Light sphere
 			"TYPE": "sphere",
 			"SHADOWS": false,
 			"CENTER": [1.4, 0.5, -2],
 			"RADIUS": 0.1, 
-			"MATERIAL": 5
+			"MATERIAL": 0
 		}
 	]
 }

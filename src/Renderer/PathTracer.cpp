@@ -1,5 +1,16 @@
 #include "PathTracer.h"
+#include "../Reflection/CookTorrance.h"
 #include "../Math/Util.h"
+
+Ray sampleRay(RayHit &rh, float refr, Vec3& absorb) {
+	// TODO: importance sampling
+	Vec3 dir = rh.normal + randomUnitVec3();
+	dir = Vec3::normalize(dir);
+	float cosi = Vec3::dot(dir, rh.normal);
+	Vec3 bias = ERR * rh.normal;
+	Point3 orig = cosi < 0 ? rh.point + bias : rh.point - bias;
+	return Ray(orig, dir, refr, absorb);
+}
 
 Color PathTracer::getColor(Ray &ray, float x, float y, int depth) {
 	if (depth == 0)
@@ -19,52 +30,45 @@ Color PathTracer::getColor(Ray &ray, float x, float y, int depth) {
 
 	Color texture = rh.hitable->getTexture(rh.uv) * mat->kd;
 
-	return texture;
-
-}
-/*
-	Vec3 o = randomUnitVec3();
-
-	// Variables
-	float nt = mat->refraction;
-	float ni = ray.refraction;
-	Vec3& n = rh.normal;
-	Vec3 i = -ray.direction;
-
-	// Microfacet
-	float ab2 = mat->roughness * mat->roughness;
-	Vec2 e = randomVec2();
-	Vec2 b = random_Beckmann(e, ab2);
-	Vec3 m = angle2Vec3(cos(b.x), b.y) + n;
-
-}
+	float cosi = Vec3::dot(ray.direction, rh.normal);
+	bool outside = cosi < 0;
+	Vec3 bias = ERR * rh.normal;
+	Point3 reflectPoint = outside ? rh.point + bias : rh.point - bias;
 
 // ============================================================================
-// Reflection / Refraction
+//  Lambertian (random reflection)
 // ============================================================================
+	if (mat->type == LAMBERTIAN) {
+		Vec3 direction = rh.normal + randomUnitVec3() * mat->fuzz;
+		Ray scattered(reflectPoint, direction, ray.refraction, ray.absorb);
+		Color color = getColor(scattered, x, y, depth - 1);
+		return absorbed * (mat->ke + texture * color);
+	}
 
-Color PathTracer::fr(Vec3& i, Vec3& o, Vec3& n) {
-	float i_n = Vec3::dot(i, n);
+// ============================================================================
+//  Metal (mirror reflection)
+// ============================================================================
+	if (mat->type == METAL) {
+		Vec3 reflectDir = ray.direction - 2 * cosi * rh.normal;
+		reflectDir += randomUnitVec3() * mat->fuzz;
+		Ray reflectedRay(reflectPoint, reflectDir, ray.refraction, ray.absorb);
+		Color color = getColor(reflectedRay, x, y, depth - 1);
+		return absorbed * (mat->ke + texture * color);
+	}
 
-	// Half vector
-	Vec3 hr = (i + o) * sign(i_m);
-	hr = Vec3::normalize(hr);
+// ============================================================================
+//  Dielectric
+// ============================================================================
+	// TODO:
+	Ray sample = sampleRay(rh, ray.refraction, ray.absorb);
 
-	float o_m = Vec3::dot(o, m);
-	float o_n = Vec3::dot(o, n);
-	float m_n = Vec3::dot(m, n);
+	Vec3 rayDir = -ray.direction;
 
-	float D = D_Beckmann(m_n, ab2);
-	float G = G1_Beckmann(i_m, i_n, mat->roughness) * G1_Beckmann(o_m, o_n, mat->roughness);
+	CookTorrance ct;
+	Color fr = ct.reflectedColor(rh.normal, rayDir, sample.direction, mat);
+	Color ft = Color(0, 0, 0); // TODO
 
-	float weight = (abs(i_m) * G) / (abs(i_n) * abs(m_n));
-
-	return (F * G * D) / (4 * i_n * o_n);
+	Color fs = (fr + ft) * PI2;
+	Color color = getColor(sample, x, y, depth - 1) * texture * fs;
+	return absorbed * (mat->ke + color);
 }
-
-Color PathTracer::ft() {
-	// Half vector
-	Vec3 ht = ni * i + n0 * o;
-	ht = Vec3::normalize(ht);
-
-}*/
