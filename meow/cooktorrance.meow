@@ -30,16 +30,6 @@
 		"REFRACTION": 1.00029
 	},
 
-	// Camera
-	"CAMERA": {
-		"TYPE": "perspective",
-		"WIDTH": 1.875,
-		"HEIGHT": 1.5,
-		"CENTER": [0, 0.5, -1],
-		"VIEWER": [0, 0, 1],
-		"REFRACTION": 1.00029
-	},
-
 	// Light
 	"LIGHTS": [
 		{
@@ -58,14 +48,14 @@
 			"RECURSIVE": false,
 			"KD": [0.08, 0.03, 0.08],
 			"KS": [0.8, 0.4, 0.8],
-			"SHINE": 24
+			"SHINE": 8
 		},
 		{ // Material 1 - Cook-Torrance
 			"TYPE": "cook-torrance",
 			"RECURSIVE": false,
 			"KD": [0.08, 0.03, 0.08],
 			"KS": [0.8, 0.4, 0.8],
-			"ROUGH": 0.8
+			"ROUGH": 0.5
 		},
 		{ // Material 2 - Floor
 			"TYPE": "blinn-phong",

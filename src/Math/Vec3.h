@@ -21,11 +21,10 @@ struct Vec3 {
     // Overloaded operators
     //
      Vec3& operator *= (float Right);
-     Vec3& operator *= (int Right);
      Vec3& operator /= (float Right);
-     Vec3& operator /= (int Right);
      Vec3& operator += (const Vec3 &Right);
      Vec3& operator -= (const Vec3 &Right);
+     Vec3& operator *= (const Vec3& Right);
 
     //
     // Normalization

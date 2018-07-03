@@ -8,7 +8,8 @@ Color CookTorrance::localColor(CubeTree* tree, Scene& scene, Ray& ray, RayHit& r
 	for (uint i = 0; i < scene.lights.size(); i++) {
 		LightHit lh = scene.lights[i]->hit(ray, rh);
 		if (!tree->hitsLight(scene.lights[i], lh)) {
-			lit += lh.color * reflectedColor(rh.normal, rayDir, lh.direction, rh.hitable->material);
+			lit += lh.color * reflectedColor(rh.normal, rayDir, lh.direction, 
+				rh.hitable->material);
 		}
 	}
 	return lit + rh.hitable->material->ka * scene.ambientColor;
@@ -44,10 +45,10 @@ Color CookTorrance::reflectedColor(Vec3& n, Vec3& w0, Vec3& wi, Material* mat) {
 		Vec3 F = schlick(h_wi, mat->ks);
 		// Reflected color
 		Color color;
-		Vec3 orig = n.perp();
 		if (mfCount == 1) {
 			color = F * reflectedColor(n, w0, wi, h, h_w0, mat->roughness);
 		} else {
+			Vec3 orig = n.perp();
 			color = Color(0, 0, 0);
 			for(int i = 0; i < mfCount; i++) {
 				

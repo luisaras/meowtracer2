@@ -10,13 +10,13 @@ protected:
 	Vec3 vertical;
 	Point3 position;
 	float refraction;
-	Color absorb = Color(0, 0, 0);
+	Color absorb;
 
-	Camera(Matrix4 &xform, Vec3 &h, Vec3 &v, Point3 &pos, float ref = 1) : 
+	Camera(Matrix4 &xform, Vec3 &h, Vec3 &v, Point3 &pos, float ref = 1, Color a = Color(0, 0, 0)) : 
 	    horizontal(xform.transformVector(h)), 
 	    vertical(xform.transformVector(v)), 
 	    position(xform.transformPoint(pos)),
-	    refraction(ref) {}
+	    refraction(ref), absorb(a) {}
 public:
 	virtual Ray getRay(float i, float j) = 0;
 	virtual float getDepth(Point3 p) = 0;

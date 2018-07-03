@@ -2,14 +2,17 @@
 #include "../Reflection/CookTorrance.h"
 #include "../Math/Util.h"
 
-Ray sampleRay(RayHit &rh, float refr, Vec3& absorb) {
-	// TODO: importance sampling
-	Vec3 dir = rh.normal + randomUnitVec3();
-	dir = Vec3::normalize(dir);
-	float cosi = Vec3::dot(dir, rh.normal);
+inline Ray sampleRay(Ray& ray, RayHit& rh, float& cosi, Vec3& dir) {
+	cosi = Vec3::dot(dir, rh.normal);
 	Vec3 bias = ERR * rh.normal;
-	Point3 orig = cosi < 0 ? rh.point + bias : rh.point - bias;
-	return Ray(orig, dir, refr, absorb);
+	Point3 orig = cosi > 0 ? rh.point + bias : rh.point - bias;
+	return Ray(orig, dir, ray.refraction, ray.absorb);
+}
+
+inline Ray sampleRay(Ray& ray, RayHit &rh, float& cosi) {
+	// TODO: importance sampling
+	Vec3 dir = randomUnitVec3();
+	return sampleRay(ray, rh, cosi, dir);
 }
 
 Color PathTracer::getColor(Ray &ray, float x, float y, int depth) {
@@ -28,47 +31,50 @@ Color PathTracer::getColor(Ray &ray, float x, float y, int depth) {
 	Color absorbed = (-ray.absorb * distance).exp();
 	absorbed = absorbed.clamp(0, 1);
 
-	Color texture = rh.hitable->getTexture(rh.uv) * mat->kd;
-
-	float cosi = Vec3::dot(ray.direction, rh.normal);
-	bool outside = cosi < 0;
-	Vec3 bias = ERR * rh.normal;
-	Point3 reflectPoint = outside ? rh.point + bias : rh.point - bias;
+	Color light, texture = rh.hitable->getTexture(rh.uv) * mat->kd;
+	float cosi;
 
 // ============================================================================
 //  Lambertian (random reflection)
 // ============================================================================
 	if (mat->type == LAMBERTIAN) {
-		Vec3 direction = rh.normal + randomUnitVec3() * mat->fuzz;
-		Ray scattered(reflectPoint, direction, ray.refraction, ray.absorb);
-		Color color = getColor(scattered, x, y, depth - 1);
-		return absorbed * (mat->ke + texture * color);
+		Vec3 direction = rh.normal + randomUnitVec3() * mat->roughness;
+		Ray scattered = sampleRay(ray, rh, cosi, direction);
+		light = getColor(scattered, x, y, depth - 1);
+		light *= PI2; // Sphere surface
 	}
 
 // ============================================================================
 //  Metal (mirror reflection)
 // ============================================================================
-	if (mat->type == METAL) {
-		Vec3 reflectDir = ray.direction - 2 * cosi * rh.normal;
-		reflectDir += randomUnitVec3() * mat->fuzz;
-		Ray reflectedRay(reflectPoint, reflectDir, ray.refraction, ray.absorb);
-		Color color = getColor(reflectedRay, x, y, depth - 1);
-		return absorbed * (mat->ke + texture * color);
+	else if (mat->type == METAL) {
+		Vec3 reflectDir = ray.direction - 
+			2 * Vec3::dot(ray.direction, rh.normal) * rh.normal;
+		reflectDir += randomUnitVec3() * mat->roughness;
+		Ray scattered = sampleRay(ray, rh, cosi, reflectDir);
+		light = getColor(scattered, x, y, depth - 1);
 	}
 
 // ============================================================================
 //  Dielectric
 // ============================================================================
-	// TODO:
-	Ray sample = sampleRay(rh, ray.refraction, ray.absorb);
+	else { 
+		Vec3 direction = rh.normal + randomUnitVec3();
+		Ray sample = sampleRay(ray, rh, cosi, direction);
+		if (cosi > 0) {
+			CookTorrance ct;
+			Vec3 view = -ray.direction;
 
-	Vec3 rayDir = -ray.direction;
+			Color fr = ct.reflectedColor(rh.normal, view, sample.direction, mat);
+			Color ft = Color(0, 0, 0); // TODO: refraction
 
-	CookTorrance ct;
-	Color fr = ct.reflectedColor(rh.normal, rayDir, sample.direction, mat);
-	Color ft = Color(0, 0, 0); // TODO
+			Color fs = (fr + ft);
+			light = getColor(sample, x, y, depth - 1) * fs;
+			light *= PI2; // Sphere surface
+		} else {
+			light = Color(0, 0, 0);
+		}
+	}
 
-	Color fs = (fr + ft) * PI2;
-	Color color = getColor(sample, x, y, depth - 1) * texture * fs;
-	return absorbed * (mat->ke + color);
+	return absorbed * (mat->ke + texture * light * abs(cosi));
 }

@@ -73,7 +73,7 @@ float perlin(const Vec3& p, int depth) {
   for (int i = 0; i < depth; i++) {
       accum += weight * noise(temp_p);
       weight *= 0.5;
-      temp_p *= 2;
+      temp_p *= 2.0;
   }
   return fabs(accum);
 }

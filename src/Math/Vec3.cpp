@@ -161,20 +161,6 @@ Vec3& Vec3::operator /= (float Right) {
     return *this;
 }
 
-Vec3& Vec3::operator *= (int Right) {
-    x *= Right;
-    y *= Right;
-    z *= Right;
-    return *this;
-}
-
-Vec3& Vec3::operator /= (int Right) {
-    x /= Right;
-    y /= Right;
-    z /= Right;
-    return *this;
-}
-
 Vec3& Vec3::operator += (const Vec3 &Right) {
     x += Right.x;
     y += Right.y;
@@ -186,6 +172,13 @@ Vec3& Vec3::operator -= (const Vec3 &Right) {
     x -= Right.x;
     y -= Right.y;
     z -= Right.z;
+    return *this;
+}
+
+Vec3& Vec3::operator *= (const Vec3& Right) {
+    x *= Right.x;
+    y *= Right.y;
+    z *= Right.z;
     return *this;
 }
 

@@ -26,17 +26,18 @@ Camera* parseCamera(Value& cam_js) {
 		Matrix4::identity();
 	// Refraction index
 	float ref = cam_obj.count("REFRACTION") ? cam_obj["REFRACTION"].getReal() : 1;
+	Vec3 ab = cam_obj.count("ABSORB") ? parseVec3(cam_obj["ABSORB"]) : Color(0, 0, 0);
 	// Camera type
 	string type = cam_obj["TYPE"].getString();
 	if (type == "perspective") {
 		// Perspective camera
 		Point3 viewer = parseVec3(cam_obj["VIEWER"]);
 		Point3 lens = center + viewer;
-		return new PerspectiveCamera(xform, hor, ver, corner, lens, ref);
+		return new PerspectiveCamera(xform, hor, ver, corner, lens, ref, ab);
 	} else if (type == "parallel") {
 		// Orthogonal camera
 		Vec3 dir = cam_obj.count("DIRECTION") ? parseVec3(cam_obj["DIRECTION"]) : Vec3(0, 0, -1);
-		return new OrthogonalCamera(xform, hor, ver, corner, dir, ref);
+		return new OrthogonalCamera(xform, hor, ver, corner, dir, ref, ab);
 	} else {
 		cout << "Camera type not recognized: " << type << endl;
 		return NULL;
